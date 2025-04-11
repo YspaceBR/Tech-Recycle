@@ -19,6 +19,11 @@ body {
   src: url("/fontes/Montserrat-VariableFont_wght.ttf");
 }
 
+@font-face {
+  font-family: "Poppins";
+  src: url("/fontes/Poppins-ExtraLight.ttf");
+}
+
 h3 {
   font-family: "Montserrat", sans-serif;
   font-size: 20px;
@@ -43,7 +48,7 @@ span {
 .container-login {
   width: 90%;
   max-width: 300px;
-  margin: 50px auto 0 auto;
+  margin: 50px auto 0 37vh;
 }
 
 .logo {
@@ -82,13 +87,20 @@ span {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  margin-right: 50px;
+  margin-right: 65px;
 }
+
+
+button {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+}
+
 
 .entrar {
   background-color: #28a745;
   padding: 10 10 10 10;
-  height: 40px;
   margin-left: 8vh;
   width: 150px;
   color: white;
@@ -101,7 +113,8 @@ span {
 }
 
 .cadastrar:hover {
-  background-color: gray;
+  background-color: #28a745;
+  color: white;
 }
 
 .entrar:hover {
@@ -126,10 +139,6 @@ span {
   width: 100%;
   height: 100%;
   padding: 10px;
-}
-
-.app-login {
-  padding: 0 0 0 3;
 }
 
 .btn-login {
@@ -191,12 +200,11 @@ span {
 
 .btn-enter {
   width: 18vh;
-  margin-top: 30px;
-  margin-left: 70px;
+  margin-left: 60px;
   height: 5vh;
+  align-items: center;
   background-color: #28a745;
   color: white;
-  font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
