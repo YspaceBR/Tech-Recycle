@@ -46,7 +46,7 @@ conn.connect((err) => {
   console.log("Conectado ao MySQL!");
 
   app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+    console.log(`🚀 Servidor rodando em ${PORT}`);
   });
 });
 
