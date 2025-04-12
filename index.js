@@ -148,7 +148,7 @@ app.post("/login", (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.render("login", { erro: "Email ou senha incorretos." });
+      return res.render("public/login", { erro: "Email ou senha incorretos." });
     }
 
     const usuario = results[0];
