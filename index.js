@@ -3,6 +3,7 @@ const exphbs = require("express-handlebars");
 const mysql = require("mysql2");
 const path = require("path");
 const session = require("express-session");
+require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -151,3 +152,5 @@ app.post("/login", (req, res) => {
     res.redirect("/principal");
   });
 });
+
+module.exports = connection;
