@@ -9,19 +9,17 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+// Configuração da conexão MySQL com variáveis do .env
 const conn = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306, // Porta do banco de dados
 });
 
-const sessionStore = new MySQLStore({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
+// Configuração do Session Store para armazenar sessões no banco
+const sessionStore = new MySQLStore({}, conn.promise());
 
 app.use(
   session({
@@ -47,6 +45,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.static(path.join(__dirname, "assets")));
 
+// Conectar ao banco de dados
 conn.connect((err) => {
   if (err) {
     console.log("Erro ao conectar ao MySQL:", err);
@@ -60,6 +59,7 @@ conn.connect((err) => {
   });
 });
 
+// Função para checar se o usuário está autenticado
 function checarAutenticacao(req, res, next) {
   if (req.session && req.session.usuario) {
     next();
