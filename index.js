@@ -3,16 +3,32 @@ const exphbs = require("express-handlebars");
 const mysql = require("mysql2");
 const path = require("path");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+const conn = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+const sessionStore = new MySQLStore({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
 app.use(
   session({
     secret: "seuSegredoAqui",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    store: sessionStore, // Armazenamento persistente
   })
 );
 
@@ -30,13 +46,6 @@ app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(express.static(path.join(__dirname, "assets")));
-
-const conn = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
 
 conn.connect((err) => {
   if (err) {
@@ -153,4 +162,4 @@ app.post("/login", (req, res) => {
   });
 });
 
-module.exports = connection;
+module.exports = conn;
