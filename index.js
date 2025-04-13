@@ -15,7 +15,7 @@ const conn = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306, // Porta do banco de dados
+  port: process.env.DB_PORT, // Porta do banco de dados
 });
 
 // Configuração do Session Store para armazenar sessões no banco
