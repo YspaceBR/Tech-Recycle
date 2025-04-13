@@ -5,8 +5,7 @@
   "scripts": {
     "start": "node ./index.js",
     "dev": "nodemon ./index.js",
-    "deploy": "git add . && (git diff --cached --quiet || git commit -m \"🚀 update\") && git push origin main",
-    "postinstall": "npm install --omit=dev"
+    "deploy": "git add . && (git diff --cached --quiet || git commit -m \"🚀 update\") && git push origin main"
   },
   "keywords": [],
   "author": "",
