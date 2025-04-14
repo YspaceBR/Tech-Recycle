@@ -550,12 +550,16 @@ button {
   margin-bottom: 10vh;
 }
 
-.container-user {
-  padding-left: 0px;
-  width: 63vh;
-  padding-right: 20vh;
+.user-menu {
+  list-style: none;
+  width: 390px; /* Defina a largura desejada */
+  margin: 0 auto; /* Centraliza o menu horizontalmente */
 }
 
+.container-user {
+  padding-left: 0px;
+  padding-right: 20vh;
+}
 
 .buttom-user {
   margin-top: 10px;
