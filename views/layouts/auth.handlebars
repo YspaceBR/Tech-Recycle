@@ -64,7 +64,7 @@
                   d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"
                 />
               </svg>
-              <span>Mapa</span>
+              <span>Pontos</span>
             </a>
             <a href="/busca" class="nav-item">
               <svg
@@ -80,7 +80,7 @@
               </svg>
               <span>Busca</span>
             </a>
-            <a href="/reciclagem" class="nav-item">
+            <a href="/reciclar" class="nav-item">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
@@ -113,4 +113,18 @@
       </div>
     </div>
   </body>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () { const navItems =
+    document.querySelectorAll('.bottom-nav .nav-item'); const pontoButtons =
+    document.querySelectorAll('.button-pontos button'); const currentPath =
+    window.location.pathname; // Ativa a navegação com base na URL
+    navItems.forEach((item) => { if (item.getAttribute('href') === currentPath)
+    { item.classList.add('active'); } item.addEventListener('click', () => {
+    navItems.forEach((nav) => nav.classList.remove('active'));
+    item.classList.add('active'); }); }); // Evento para ativar os botões-pontos
+    manualmente pontoButtons.forEach((btn) => { btn.addEventListener('click', ()
+    => { pontoButtons.forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active'); }); }); });
+  </script>
 </html>

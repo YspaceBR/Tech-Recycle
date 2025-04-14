@@ -370,10 +370,6 @@ button {
   margin-bottom: 4px;
 }
 
-.nav-item.active svg {
-  fill: #28a745;
-}
-
 .nav-item span {
   font-size: 11px;
 }
