@@ -86,6 +86,7 @@ app.get("/principal", checarAutenticacao, (req, res) => {
   res.render("auth/principal", {
     layout: "auth",
     navClass: "nav-principal",
+    nome: nome
   });
 });
 
