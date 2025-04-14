@@ -84,8 +84,8 @@ app.get("/login", (req, res) => {
 app.get("/principal", checarAutenticacao, (req, res) => {
   const nome = req.session.usuario.nome || "Usuário";
   res.render("auth/principal", {
+    layout: "auth",
     navClass: "nav-principal",
-    nome,
   });
 });
 

@@ -5,7 +5,9 @@
 }
 
 body {
-  height: 100vh;
+  margin: 0;
+  padding: 0;
+  height: auto;
   background-color: white;
 }
 
@@ -34,6 +36,7 @@ h4 {
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
 }
+
 p {
   font-family: "SourceCodePro", sans-serif;
   font-weight: 500;
@@ -45,17 +48,11 @@ span {
   font-weight: 500;
 }
 
-.container-login {
-  width: 90%;
-  max-width: 300px;
-  margin: 50px auto 0 37vh;
-}
-
 .logo {
   width: 250px;
   height: 230px;
   margin-bottom: 8vh;
-  margin-left: 25px;
+  margin-left: 40px;
   margin-top: 40px;
 }
 
@@ -86,10 +83,8 @@ span {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
   margin-right: 65px;
 }
-
 
 button {
   font-family: "Poppins", sans-serif;
@@ -97,10 +92,9 @@ button {
   font-weight: 800;
 }
 
-
 .entrar {
   background-color: #28a745;
-  padding: 10 10 10 10;
+  padding: 10px;
   margin-left: 8vh;
   width: 150px;
   color: white;
@@ -124,9 +118,7 @@ button {
 .iphone-frame {
   background: url("/img/1111.avif") no-repeat center center;
   background-size: contain;
-  width: 120vh;
   height: 100vh;
-  position: relative;
   margin: auto;
   display: flex;
   align-items: center;
@@ -240,15 +232,15 @@ button {
 
 .social-buttons {
   display: flex;
-  justify-content: center; /* centraliza os botões */
-  gap: 10px; /* espaço entre os botões */
+  justify-content: center;
+  gap: 10px;
   margin-left: 30px;
-  margin-top: 20px; /* espaço acima dos botões */
+  margin-top: 20px;
 }
 
 .social-btn {
-  width: 100px; /* define a largura dos botões */
-  height: 50px; /* define altura pra manter quadrado */
+  width: 100px;
+  height: 50px;
   border: none;
   background-color: white;
   display: flex;
@@ -258,18 +250,18 @@ button {
 }
 
 .social-btn.google img {
-  width: 30px; /* ou qualquer tamanho que quiser */
-  height: auto; /* mantém proporção */
+  width: 30px;
+  height: auto;
 }
 
 .social-btn.facebook img {
-  width: 43px; /* ou qualquer tamanho que quiser */
-  height: auto; /* mantém proporção */
+  width: 43px;
+  height: auto;
 }
 
 .social-btn.apple img {
-  width: 35px; /* ou qualquer tamanho que quiser */
-  height: auto; /* mantém proporção */
+  width: 35px;
+  height: auto;
 }
 
 .cadastro-txt {
@@ -346,20 +338,21 @@ button {
 }
 
 .tela-principal {
-  width: 340px;
-  height: 300px;
-  margin-top: 20px;
-  margin-left: 282px;
-  padding: 15px;
-  padding-right: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 414px;
+  margin: 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .bottom-nav {
   position: absolute;
   bottom: 50px;
-  right: 39.7vh;
-  width: 320px;
-  background-color: white;
+  width: 350px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   border-bottom-left-radius: 30vh;
@@ -367,7 +360,7 @@ button {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 8px 0;
+  padding: 20px 0;
   border-top: 1px solid #ccc;
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
 }
@@ -399,21 +392,32 @@ button {
 
 .nav-principal {
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  padding-top: 30px;
+  box-sizing: border-box;
 }
 
 .logo-principal {
   width: 90px;
-  margin-right: 19vh;
+  margin-right: 17vh;
 }
 
 .logo-principal0 {
-  width: 50px;
-  margin-bottom: 25px;
+  width: 60px;
+  margin-left: 60px;
 }
 
 .container-dashboard {
-  margin-top: 12vh;
-  padding-right: 10px;
+  flex-direction: column;
+  align-items: center;
+  width: 420px;
+  margin: 5vh 6vh;
+  padding: 8vh 20px;
+  height: auto;
+  box-sizing: border-box;
 }
 
 .button-pontos {
@@ -495,8 +499,7 @@ button {
 }
 
 .residuos-container {
-  padding: 1px;
-  margin-top: 30px;
+  padding: 1px 10px 10px;
   padding-right: 3px;
 }
 
@@ -509,7 +512,7 @@ button {
 .residuos-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding-right: 5gitpx;
+  padding-right: 5px;
   gap: 15px;
   margin-bottom: 20px;
   text-align: center;
@@ -559,14 +562,14 @@ button {
 }
 
 .conteudo-auth {
-  margin-top: 8vh;
-  padding-right: 10px;
+  margin-top: 15vh;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 
 .container-user {
-  margin-top: 12vh;
   padding-left: 0px;
-  padding-right: 6px;
+  padding-right: 20vh;
 }
 
 .buttom-user {
@@ -595,4 +598,11 @@ button {
 
 .user-menu svg {
   margin-right: 12px;
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8vh;
 }
