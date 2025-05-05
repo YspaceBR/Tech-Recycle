@@ -110,7 +110,7 @@
     }
 
     const emailUsuario = req.session.usuario.email;
-    console.log("Email da sessão:", emailUsuario);
+    //console.log("Email da sessão:", emailUsuario); 
 
     const sql = "SELECT nome, email, senha FROM usuarios WHERE email = ?";
 
@@ -130,7 +130,7 @@
       }
 
       const usuario = results[0];
-      //console.log("Usuário encontrado:", usuario); linha de log para depuração//
+      //console.log("Usuário encontrado:", usuario);//
 
       res.render("auth/dados", {
         layout: "auth",
