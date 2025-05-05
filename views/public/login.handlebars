@@ -1,6 +1,6 @@
 <div class="container-login">
   <div class="app-login">
-    <a href="/" class="btn-login">
+    <a href="/" class="btn-login" style="font-size: 20px;">
       &#x276E;
     </a>
     <div class="login-app">
@@ -9,7 +9,10 @@
         Faça seu login
       </h3>
       {{#if erro}}
-        <div class="mensagem-erro">{{erro}}</div>
+        <p
+          class="erro"
+          style="color: red; text-align: center; margin-top: 30px"
+        > {{erro}}</p>
       {{/if}}
     </div>
     <div class="form-login">
@@ -68,9 +71,8 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () { const emailInput =
   document.querySelector('input[name="email"]'); const passwordInput =
-  document.querySelector('input[name="password"]'); const errorMessage =
-  document.querySelector(".mensagem-erro"); function esconderErro() { if
-  (errorMessage) { errorMessage.style.display = "none"; } }
-  emailInput.addEventListener("input", esconderErro);
-  passwordInput.addEventListener("input", esconderErro); });
+  document.querySelector('input[name="password"]'); const erro =
+  document.querySelector(".erro"); function esconderErro() { if (erro) {
+  erro.style.display = "none"; } } emailInput.addEventListener("input",
+  esconderErro); passwordInput.addEventListener("input", esconderErro); });
 </script>

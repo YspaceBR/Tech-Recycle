@@ -155,23 +155,35 @@
   });
 
   app.post("/cadastrar", (req, res) => {
-    const {
-      nome,
-      email,
-      senha
-    } = req.body;
-
-    const sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
-    const values = [nome, email, senha];
-
-    conn.query(sql, values, (err, result) => {
+    const { nome, email, senha } = req.body;
+  
+    // Verifica se o e-mail já existe
+    const checkEmailSql = "SELECT * FROM usuarios WHERE email = ?";
+    conn.query(checkEmailSql, [email], (err, results) => {
       if (err) {
-        console.error("Erro ao cadastrar usuário:", err);
-        return res.status(500).send("Erro ao cadastrar");
+        console.error("Erro ao verificar e-mail:", err);
+        return res.status(500).send("Erro interno");
       }
-
-      console.log("Usuário cadastrado com sucesso!");
-      res.redirect("/login");
+  
+      if (results.length > 0) {
+        // E-mail já cadastrado
+        return res.render("public/cadastrar", {
+          navClass: "nav-cadastrar",
+          errorMessage: "E-mail já está em uso."
+        });
+      }
+  
+      // Se não existir, insere o novo usuário
+      const insertSql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
+      conn.query(insertSql, [nome, email, senha], (err, result) => {
+        if (err) {
+          console.error("Erro ao cadastrar usuário:", err);
+          return res.status(500).send("Erro ao cadastrar");
+        }
+  
+        console.log("Usuário cadastrado com sucesso!");
+        res.redirect("/login");
+      });
     });
   });
 

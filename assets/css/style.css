@@ -615,7 +615,6 @@ span {
   color: #333;
 }
 
-/* Estilo da tabela */
 .tabela-cadastro {
   width: 100%;
   border-collapse: collapse;
@@ -630,6 +629,7 @@ span {
 
 .tabela-cadastro th {
   font-size: 16px;
+  padding-left: 0px;
   border: none;
   color: #333;
   font-weight: 600;

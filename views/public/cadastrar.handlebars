@@ -1,9 +1,16 @@
 <div class="container-login">
-  <a href="/" class="btn-login">
+  <a href="/" class="btn-login" style="font-size: 20px;">
     &#x276E;
   </a>
   <div class="form-wrapper">
     <h3>Crie sua conta</h3>
+
+    {{#if errorMessage}}
+      <p
+        class="erro"
+        style="color: red; text-align: center;"
+      >{{errorMessage}}</p>
+    {{/if}}
 
     <form class="form" action="/cadastrar" method="POST">
       <input type="text" name="nome" placeholder="Nome" required />
@@ -21,3 +28,13 @@
     </form>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () { const emailInput =
+  document.querySelector('input[name="email"]'); const passwordInput =
+  document.querySelector('input[name="senha"]'); // nome do campo é "senha"
+  const errorMessage = document.querySelector(".erro "); // classe usada na
+  mensagem de erro function esconderErro() { if (errorMessage) {
+  errorMessage.style.display = "none"; } } emailInput.addEventListener("input",
+  esconderErro); passwordInput.addEventListener("input", esconderErro); });
+</script>
