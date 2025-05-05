@@ -130,7 +130,7 @@
       }
 
       const usuario = results[0];
-      console.log("Usuário encontrado:", usuario);
+      //console.log("Usuário encontrado:", usuario); linha de log para depuração//
 
       res.render("auth/dados", {
         layout: "auth",
@@ -155,8 +155,12 @@
   });
 
   app.post("/cadastrar", (req, res) => {
-    const { nome, email, senha } = req.body;
-  
+    const {
+      nome,
+      email,
+      senha
+    } = req.body;
+
     // Verifica se o e-mail já existe
     const checkEmailSql = "SELECT * FROM usuarios WHERE email = ?";
     conn.query(checkEmailSql, [email], (err, results) => {
@@ -164,7 +168,7 @@
         console.error("Erro ao verificar e-mail:", err);
         return res.status(500).send("Erro interno");
       }
-  
+
       if (results.length > 0) {
         // E-mail já cadastrado
         return res.render("public/cadastrar", {
@@ -172,7 +176,7 @@
           errorMessage: "E-mail já está em uso."
         });
       }
-  
+
       // Se não existir, insere o novo usuário
       const insertSql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
       conn.query(insertSql, [nome, email, senha], (err, result) => {
@@ -180,7 +184,7 @@
           console.error("Erro ao cadastrar usuário:", err);
           return res.status(500).send("Erro ao cadastrar");
         }
-  
+
         console.log("Usuário cadastrado com sucesso!");
         res.redirect("/login");
       });
