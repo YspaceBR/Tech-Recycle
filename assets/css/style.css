@@ -167,6 +167,8 @@ span {
 
 .esqueceu-senha a {
   font-size: 0.9em;
+  font-weight: 500;
+  font-family: "Montserrat", sans-serif;
   color: black;
   text-decoration: none;
 }
@@ -181,6 +183,8 @@ span {
   height: 5vh;
   align-items: center;
   background-color: #28a745;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
   color: white;
   border: none;
   border-radius: 8px;
@@ -249,7 +253,7 @@ span {
 }
 
 .cadastro-txt {
-  margin-top: 10vh;
+  margin-top: 28vh;
   text-align: center;
 }
 
