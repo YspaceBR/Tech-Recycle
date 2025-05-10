@@ -1,25 +1,194 @@
-<html>
-  <head>
-    <title>Mapa com Google Maps API</title>
-    <style>
-      #map { height: 100vh; width: 100%; } { .tela-principal { padding: 0%;}
-      .conteudo-auth { margin-bottom: 0%;} }
-    </style>
-  </head>
-  <body>
-    <div id="map"></div>
-    <script>
-      function initMap() { const localizacao = { lat: -15.7942, lng: -47.8822 };
-      const mapa = new google.maps.Map(document.getElementById("map"), { zoom:
-      12, center: localizacao, }); new google.maps.Marker({ position:
-      localizacao, map: mapa, title: "Você está aqui!", }); }
-    </script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pontos de Coleta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      height: 100%;
+      overflow: hidden;
+    }
 
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJYf5k10Bh75U0nHK4riQgWax5KEW9PMc&callback=initMap"
-      async
-      defer
-    >
-    </script>
-  </body>
+    #mapa {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .container {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 70%;
+      background-color: white;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+      transform: translateY(70%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      z-index: 999;
+    }
+
+    .container.expanded {
+      transform: translateY(0%);
+    }
+
+    .drag-handle {
+      width: 40px;
+      height: 5px;
+      background-color: #ccc;
+      border-radius: 3px;
+      margin: 8px auto;
+      cursor: pointer;
+    }
+
+    .titulo {
+      font-size: 18px;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 500;
+      padding: 0 16px;
+    }
+
+    .busca input {
+      width: 90%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin: 12px auto;
+      display: block;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 12px 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .card:hover {
+      background-color: #f3f3f3;
+    }
+
+    .card h3 {
+      font-size: 16px;f
+      font-family: "Montserrat", sans-serif;
+      font-weight: 500;
+      margin: 0 0 4px 0;
+    }
+    .card p {
+      font-size: 14px;
+      font-family: "SourceCodePro", sans-serif;
+      margin: 4px 0;
+    }
+
+    .card .aberto {
+      color: #2e7d32;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="mapa"></div>
+
+  <div class="container" id="coletaContainer">
+    <div class="drag-handle" id="handle"></div>
+    <div class="titulo">Encontre pontos de coleta e organizações perto de você</div>
+    <div class="busca">
+      <input type="text" placeholder="Digite seu CEP" />
+    </div>
+
+    <div class="card" data-lat="-15.8311" data-lng="-48.0554">
+  <h3>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" width="25" height="25" fill="#28a745" style="margin-right: 6px; vertical-align: middle;">
+      <path d="M16 144a144 144 0 1 1 288 0A144 144 0 1 1 16 144zM160 80c8.8 0 16-7.2 16-16s-7.2-16-16-16c-53 0-96 43-96 96c0 8.8 7.2 16 16 16s16-7.2 16-16c0-35.3 28.7-64 64-64zM128 480l0-162.9c10.4 1.9 21.1 2.9 32 2.9s21.6-1 32-2.9L192 480c0 17.7-14.3 32-32 32s-32-14.3-32-32z"/>
+    </svg>
+    E-Reciclagem - Centro de Material Eletrônico Reciclável
+  </h3>
+  <p>QS 07, Lote 01, Taguatinga Sul - Taguatinga</p>
+  <p class="aberto">Aberto de seg. a sex. das 7h30 às 18h</p>
+  <p>(61) 98467-8637</p>
+</div>
+
+<div class="card" data-lat="-15.8252" data-lng="-48.0433">
+  <h3>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" width="25" height="25" fill="#28a745" style="margin-right: 6px; vertical-align: middle;">
+      <path d="M16 144a144 144 0 1 1 288 0A144 144 0 1 1 16 144zM160 80c8.8 0 16-7.2 16-16s-7.2-16-16-16c-53 0-96 43-96 96c0 8.8 7.2 16 16 16s16-7.2 16-16c0-35.3 28.7-64 64-64zM128 480l0-162.9c10.4 1.9 21.1 2.9 32 2.9s21.6-1 32-2.9L192 480c0 17.7-14.3 32-32 32s-32-14.3-32-32z"/>
+    </svg>
+    Coleta Municipal
+  </h3>
+  <p>Trajeto pelo bairro Taguatinga Sul</p>
+  <p class="aberto">Quinta-feira a partir das 18h</p>
+</div>
+
+<div class="card" data-lat="-15.8367" data-lng="-48.0383">
+  <h3>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" width="25" height="25" fill="#28a745" style="margin-right: 6px; vertical-align: middle;">
+      <path d="M16 144a144 144 0 1 1 288 0A144 144 0 1 1 16 144zM160 80c8.8 0 16-7.2 16-16s-7.2-16-16-16c-53 0-96 43-96 96c0 8.8 7.2 16 16 16s16-7.2 16-16c0-35.3 28.7-64 64-64zM128 480l0-162.9c10.4 1.9 21.1 2.9 32 2.9s21.6-1 32-2.9L192 480c0 17.7-14.3 32-32 32s-32-14.3-32-32z"/>
+    </svg>
+    PEV’s Estação de Metrô Águas Claras
+  </h3>
+  <p>Águas Claras, Brasília - DF</p>
+  <p class="aberto">Aberto de seg. a sex. das 6h às 23h</p>
+</div>
+
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map("mapa").setView([-15.7942, -47.8822], 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Marcadores com referência para abrir o popup
+    const markers = {
+      'E-Reciclagem': L.marker([-15.8311, -48.0554]).addTo(map).bindPopup("E-Reciclagem - Taguatinga Sul"),
+      'Coleta Municipal': L.marker([-15.8252, -48.0433]).addTo(map).bindPopup("Coleta Municipal - Taguatinga Sul"),
+      'PEV Metrô': L.marker([-15.8367, -48.0383]).addTo(map).bindPopup("PEV Metrô - Águas Claras"),
+    };
+
+    // Expansão da aba
+    const container = document.getElementById('coletaContainer');
+    const handle = document.getElementById('handle');
+    handle.addEventListener('click', () => {
+      container.classList.toggle('expanded');
+    });
+
+    // Função para voar até o ponto clicado
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const lat = parseFloat(card.dataset.lat);
+        const lng = parseFloat(card.dataset.lng);
+        map.flyTo([lat, lng], 16);
+
+        // Procura o marcador com posição exata
+        Object.values(markers).forEach(marker => {
+          const pos = marker.getLatLng();
+          if (pos.lat === lat && pos.lng === lng) {
+            marker.openPopup();
+          }
+        });
+
+        // Recolher o container (opcional)
+        container.classList.remove('expanded');
+      });
+    });
+  </script>
+</body>
 </html>
