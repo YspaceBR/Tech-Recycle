@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <title>Pontos de Coleta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJYf5k10Bh75U0nHK4riQgWax5KEW9PMc"></script>
+
   <style>
     html, body {
       margin: 0;
@@ -167,48 +168,86 @@
 
   </div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    const map = L.map("mapa").setView([-15.7942, -47.8822], 12);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; OpenStreetMap contributors',
-      maxZoom: 19
-    }).addTo(map);
+<script>
+  let map;
+  const markers = {};
 
-    // Marcadores com referência para abrir o popup
-    const markers = {
-      'E-Reciclagem': L.marker([-15.8311, -48.0554]).addTo(map).bindPopup("E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"),
-      'Coleta Municipal': L.marker([-15.8252, -48.0433]).addTo(map).bindPopup("Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"),
-      'PEV Metrô': L.marker([-15.8367, -48.0383]).addTo(map).bindPopup("PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"),
+  function initMap() {
+    map = new google.maps.Map(document.getElementById("mapa"), {
+      center: { lat: -15.7942, lng: -47.8822 },
+      zoom: 12,
+    });
+
+    // Criar marcadores
+    markers['E-Reciclagem'] = new google.maps.Marker({
+      position: { lat: -15.8311, lng: -48.0554 },
+      map: map,
+      title: "E-Reciclagem",
+    });
+
+    markers['Coleta Municipal'] = new google.maps.Marker({
+      position: { lat: -15.8252, lng: -48.0433 },
+      map: map,
+      title: "Coleta Municipal",
+    });
+
+    markers['PEV Metrô'] = new google.maps.Marker({
+      position: { lat: -15.8367, lng: -48.0383 },
+      map: map,
+      title: "PEV Metrô",
+    });
+
+    // Adicionar popups com botão AGENDAR
+    const infoWindows = {
+      'E-Reciclagem': new google.maps.InfoWindow({
+        content: "E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"
+      }),
+      'Coleta Municipal': new google.maps.InfoWindow({
+        content: "Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"
+      }),
+      'PEV Metrô': new google.maps.InfoWindow({
+        content: "PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"
+      }),
     };
 
-    // Expansão da aba
+    // Abrir popup ao clicar no marcador
+    for (const key in markers) {
+      markers[key].addListener('click', () => {
+        infoWindows[key].open(map, markers[key]);
+      });
+    }
+
+    // Cards - interações
     const container = document.getElementById('coletaContainer');
     const handle = document.getElementById('handle');
     handle.addEventListener('click', () => {
       container.classList.toggle('expanded');
     });
 
-    // Função para voar até o ponto clicado
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
       card.addEventListener('click', () => {
         const lat = parseFloat(card.dataset.lat);
         const lng = parseFloat(card.dataset.lng);
-        map.flyTo([lat, lng], 16);
 
-        // Procura o marcador com posição exata
-        Object.values(markers).forEach(marker => {
-          const pos = marker.getLatLng();
-          if (pos.lat === lat && pos.lng === lng) {
-            marker.openPopup();
+        map.panTo({ lat, lng });
+        map.setZoom(16);
+
+        for (const key in markers) {
+          const pos = markers[key].getPosition();
+          if (pos.lat() === lat && pos.lng() === lng) {
+            infoWindows[key].open(map, markers[key]);
           }
-        });
+        }
 
-        // Recolher o container (opcional)
         container.classList.remove('expanded');
       });
     });
-  </script>
+  }
+
+  // Inicializa o mapa após o carregamento da página
+  window.onload = initMap;
+</script>
+
 </body>
 </html>
