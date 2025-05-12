@@ -5,13 +5,6 @@
   <title>Agendar Coleta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-    }
-
     .container {
       max-width: 600px;
       margin: 0 auto;
@@ -30,6 +23,11 @@
       margin-right: 15px;
     }
 
+    .local-card {
+      margin-top: 10px;
+      box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.15);
+    }
+
     .local-card,
     .calendar-section,
     .material-section,
@@ -40,7 +38,6 @@
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 20px;
-      box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
     }
 
     h2 {
@@ -99,6 +96,8 @@
       width: 100%;
       padding: 12px;
       border: 1px solid #ccc;
+      color: #333;
+      font-family: "Montserrat", sans-serif;
       border-radius: 5px;
       margin-top: 10px;
       background-color: #f9f9f9;
@@ -108,9 +107,9 @@
     .note {
       font-size: 12px;
       margin-top: 5px;
-    font-family: "SourceCodePro", sans-serif;
-    font-weight: 500;
-    color: gray;
+      font-family: "SourceCodePro", sans-serif;
+      font-weight: 500;
+      color: gray;
     }
 
     .toggle {
@@ -166,21 +165,21 @@
       resize: vertical;
       min-height: 80px;
       margin-top: 10px;
-      font-family: inherit;
+      font-family: "SourceCodePro", sans-serif;
       box-sizing: border-box;
     }
 
     .btn-agendar {
       background-color: #28a745;
       color: white;
-      padding: 15px;
+      padding: 15px 30px;
       border: none;
       border-radius: 8px;
-      width: 100%;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 20px;
+      margin: 20px auto 0 auto;
+      display: block;
     }
 
     .btn-agendar:hover {
@@ -195,147 +194,148 @@
     }
 
     .month-title {
-      font-weight: bold;
+      font-weight: 500;
     }
 
     .nav-arrow {
       cursor: pointer;
+      color: #28a745;
       font-size: 20px;
       user-select: none;
+    }
+
+    .agendamento-box {
+      background-color: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.15);
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-   <a href="#" class="btn-login" id="back-btn" style="font-size: 20px; padding-left: 3vh;" onclick="voltarPagina()">&#x276E;</a>
+    <a href="#" class="btn-login" id="back-btn" style="font-size: 20px; padding-left: 3vh;" onclick="voltarPagina()">&#x276E;</a>
 
     <div class="local-card">
       <h2 id="nome-local">Carregando...</h2>
     </div>
 
-    <div class="calendar-section">
-      <h2>Quando será sua coleta?</h2>
-      <div class="month-nav">
-        <span class="nav-arrow" onclick="mudarMes(-1)">&#9664;</span>
-        <span class="month-title" id="mes-ano">Agosto 2024</span>
-        <span class="nav-arrow" onclick="mudarMes(1)">&#9654;</span>
+    <div class="agendamento-box">
+      <div class="calendar-section">
+        <h2>Quando será sua coleta?</h2>
+        <div class="month-nav">
+          <span class="nav-arrow" onclick="mudarMes(-1)">&#9664;</span>
+          <span class="month-title" id="mes-ano">Agosto 2025</span>
+          <span class="nav-arrow" onclick="mudarMes(1)">&#9654;</span>
+        </div>
+        <div class="week-days">
+          <div class="week-day">Dom</div>
+          <div class="week-day">Seg</div>
+          <div class="week-day">Ter</div>
+          <div class="week-day">Qua</div>
+          <div class="week-day">Qui</div>
+          <div class="week-day">Sex</div>
+          <div class="week-day">Sáb</div>
+        </div>
+        <div class="calendar" id="calendario"></div>
       </div>
-      <div class="week-days">
-        <div class="week-day">Dom</div>
-        <div class="week-day">Seg</div>
-        <div class="week-day">Ter</div>
-        <div class="week-day">Qua</div>
-        <div class="week-day">Qui</div>
-        <div class="week-day">Sex</div>
-        <div class="week-day">Sáb</div>
+
+      <div class="material-section">
+        <h2>Quais materiais serão coletados?</h2>
+        <div class="note" id="material-nota">*Essa empresa só realiza coletas Lixos Eletrônicos</div>
+        <select class="dropdown" id="material-select">
+          <option value="">Selecione uma ou mais opções</option>
+          <option value="informatica">Informatica</option>
+          <option value="Eletro Eletronicos">Eletro Eletronicos</option>
+          <option value="Residuos Eletronicos">Residuos Eletronicos</option>
+          <option value="Aparelhos Telefonicos">Aparelhos Telefonicos</option>
+        </select>
       </div>
-      <div class="calendar" id="calendario"></div>
-    </div>
 
-    <div class="material-section">
-      <h2>Quais materiais serão coletados?</h2>
-      <div class="note" id="material-nota">*Essa empresa só realiza coletas Livros Eletrônicos</div>
-      <select class="dropdown" id="material-select">
-        <option value="">Selecione uma ou mais opções</option>
-        <option value="informatica">Informatica</option>
-        <option value="Eletro Eletronicos">Eletro Eletronicos</option>
-        <option value="Residuos Eletronicos">Residuos Eletronicos</option>
-        <option value="Aparelhos Telefonicos">Aparelhos Telefonicos</option>
-      </select>
-    </div>
-
-    <div class="peso-section">
-      <h2>Qual o peso aproximado da sua separação?</h2>
-      <div class="note" id="peso-nota">*Essa empresa só realiza coletas a partir de 10kg</div>
-      <select class="dropdown" id="peso-select">
-        <option value="">Selecione uma opção</option>
-        <option value="ate5">Até 5kg</option>
-        <option value="5a10">De 5kg a 10kg</option>
-        <option value="10a20">De 10kg a 20kg</option>
-        <option value="mais20">Mais de 20kg</option>
-      </select>
-    </div>
-
-    <div class="toggle-container">
-      <div>
-        <h2>Utilizar endereço e contatos do cadastro</h2>
+      <div class="peso-section">
+        <h2>Qual o peso aproximado da sua separação?</h2>
+        <div class="note" id="peso-nota">*Essa empresa só realiza coletas a partir de 10kg</div>
+        <select class="dropdown" id="peso-select">
+          <option value="">Selecione uma opção</option>
+          <option value="ate5">Até 5kg</option>
+          <option value="5a10">De 5kg a 10kg</option>
+          <option value="10a20">De 10kg a 20kg</option>
+          <option value="mais20">Mais de 20kg</option>
+        </select>
       </div>
-      <label class="toggle">
-        <input type="checkbox" id="usar-cadastro" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
 
-    <div class="observacao">
-      <h2>Tem alguma observação?</h2>
-      <textarea id="observacao" placeholder="Comente sobre seus itens, horários que estará disponível, etc."></textarea>
-    </div>
+      <div class="toggle-container">
+        <div>
+          <h2>Utilizar endereço e contatos do cadastro</h2>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="usar-cadastro" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
 
-    <button class="btn-agendar" onclick="finalizarAgendamento()">AGENDAR COLETA</button>
+      <div class="observacao">
+        <h2>Tem alguma observação?</h2>
+        <textarea id="observacao" placeholder="Comente sobre seus itens, horários que estará disponível, etc."></textarea>
+      </div>
+
+      <button class="btn-agendar" onclick="finalizarAgendamento()">Agendar Coleta</button>
+    </div>
   </div>
 
   <script>
-    // Recuperar nome do ponto selecionado
     let pontoSelecionado = localStorage.getItem('pontoTemp') || '';
-    
-    // Exibir nome do local
     document.getElementById('nome-local').innerText = pontoSelecionado;
-    
-    // Função para voltar à página anterior
+
     function voltarPagina() {
       window.location.href = '/mapa';
     }
-    
-    // Gerar calendário
+
     const hoje = new Date();
     let mesAtual = hoje.getMonth();
     let anoAtual = hoje.getFullYear();
     let diaSelecionado = null;
-    
+
     function atualizarCalendario() {
       const calendario = document.getElementById('calendario');
       calendario.innerHTML = '';
-      
+
       const mesAnoElement = document.getElementById('mes-ano');
       const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
       mesAnoElement.innerText = `${meses[mesAtual]} ${anoAtual}`;
-      
+
       const primeiroDia = new Date(anoAtual, mesAtual, 1);
       const ultimoDia = new Date(anoAtual, mesAtual + 1, 0);
-      
-      // Adicionar dias vazios antes do primeiro dia do mês
+
       for (let i = 0; i < primeiroDia.getDay(); i++) {
         const diaVazio = document.createElement('div');
         diaVazio.className = 'day disabled';
         calendario.appendChild(diaVazio);
       }
-      
-      // Adicionar dias do mês
+
       for (let i = 1; i <= ultimoDia.getDate(); i++) {
         const dia = document.createElement('div');
         dia.className = 'day';
         dia.innerText = i;
-        
-        // Desabilitar dias passados
+
         const dataAtual = new Date(anoAtual, mesAtual, i);
         if (dataAtual < hoje) {
           dia.className = 'day disabled';
         } else {
-          dia.onclick = function() {
-            // Remover seleção anterior
+          dia.onclick = function () {
             const diasAtivos = document.querySelectorAll('.day.active');
             diasAtivos.forEach(d => d.classList.remove('active'));
-            
-            // Selecionar este dia
+
             dia.classList.add('active');
             diaSelecionado = new Date(anoAtual, mesAtual, i);
           };
         }
-        
+
         calendario.appendChild(dia);
       }
     }
-    
+
     function mudarMes(delta) {
       mesAtual += delta;
       if (mesAtual > 11) {
@@ -347,78 +347,61 @@
       }
       atualizarCalendario();
     }
-    
-    // Inicializar com o mês atual
-    window.onload = function() {
-      // Verificar se veio da página do mapa
+
+    window.onload = function () {
       const pontoTemp = localStorage.getItem('pontoTemp');
       if (!pontoTemp) {
-        // Se não tem ponto selecionado, redirecionar para o mapa
         window.location.href = '/mapa';
         return;
       }
-      
+
       document.getElementById('nome-local').innerText = pontoTemp;
-      
-      // Se for E-Reciclagem, ajustar as notas
+
       if (pontoTemp === 'E-Reciclagem') {
         document.getElementById('material-nota').innerText = '*Essa empresa só realiza coletas Livros Eletrônicos';
         document.getElementById('peso-nota').innerText = '*Essa empresa só realiza coletas a partir de 10kg';
       }
-      
+
       atualizarCalendario();
     };
-    
-    // Finalizar agendamento
+
     function finalizarAgendamento() {
-      // Validar campos
       if (!diaSelecionado) {
         alert('Por favor, selecione uma data para a coleta');
         return;
       }
-      
+
       const material = document.getElementById('material-select').value;
       if (!material) {
         alert('Por favor, selecione o tipo de material');
         return;
       }
-      
+
       const peso = document.getElementById('peso-select').value;
       if (!peso) {
         alert('Por favor, selecione o peso aproximado');
         return;
       }
-      
-      // Formato da data para exibição
-      const dataFormatada = diaSelecionado.toLocaleDateString('pt-BR');
-      
-      // Dados do agendamento
-      const pontoNome = document.getElementById('nome-local').innerText;
-      const observacao = document.getElementById('observacao').value;
-      const usarCadastro = document.getElementById('usar-cadastro').checked;
-      
-      // Informações completas do agendamento
-      const infoAgendamento = {
-        ponto: pontoNome,
-        data: dataFormatada,
-        material: material,
-        peso: peso,
-        observacao: observacao,
-        usarCadastro: usarCadastro
-      };
-      
-      // Salvar informações no localStorage
-      localStorage.setItem('agendamento', pontoNome);
-      localStorage.setItem('agendamentoInfo', JSON.stringify(infoAgendamento));
-      localStorage.setItem('agendamentoStatus', 'feito');
-      
-      // Redirecionar para página de confirmação
-      window.location.href = '/agenda';
 
-       function voltarPagina() {
-    const lastPage = document.referrer || '/'; 
-    window.location.href = lastPage;
-  }
+      const usarCadastro = document.getElementById('usar-cadastro').checked;
+      const observacao = document.getElementById('observacao').value;
+
+      const dataFormatada = diaSelecionado.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const horario = '08:00';
+
+      const agendamento = {
+        data: dataFormatada,
+        horario,
+        material,
+        peso,
+        usarCadastro,
+        observacao,
+        local: pontoSelecionado
+      };
+
+      localStorage.setItem('agendamento', JSON.stringify(agendamento));
+      localStorage.setItem('agendamentoStatus', 'ativo');
+      window.location.href = '/principal';
     }
   </script>
 </body>

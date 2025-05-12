@@ -198,17 +198,18 @@
       title: "PEV Metrô",
     });
 
-    const infoWindows = {
-      'E-Reciclagem': new google.maps.InfoWindow({
-        content: "E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('E-Reciclagem')\">AGENDAR</button></div>"
-      }),
-      'Coleta Municipal': new google.maps.InfoWindow({
-        content: "Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('Coleta Municipal')\">AGENDAR</button></div>"
-      }),
-      'PEV Metrô': new google.maps.InfoWindow({
-        content: "PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('PEV Metrô')\">AGENDAR</button></div>"
-      }),
-    };
+ const infoWindows = {
+  'E-Reciclagem': new google.maps.InfoWindow({
+    content: "E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('E-Reciclagem')\">AGENDAR</button></div>"
+  }),
+  'Coleta Municipal': new google.maps.InfoWindow({
+    content: "Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('Coleta Municipal')\">AGENDAR</button></div>"
+  }),
+  'PEV Metrô': new google.maps.InfoWindow({
+    content: "PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('PEV Metrô')\">AGENDAR</button></div>"
+  }),
+};
+
 
     // Abrir popup ao clicar no marcador
     for (const key in markers) {
@@ -245,14 +246,14 @@
     });
   }
 
-  // Nova função para ir para a página de formulário de agendamento
-  function irParaFormulario(ponto) {
-    // Salvar temporariamente o ponto selecionado
-    localStorage.setItem('pontoTemp', ponto);
-    
-    // Redirecionar para a página de formulário
-    window.location.href = '/formulario';
-  }
+ // Nova função para ir para a página de formulário de agendamento
+function irParaFormulario(ponto) {
+  // Salvar temporariamente o ponto selecionado no localStorage
+  localStorage.setItem('pontoTemp', ponto);
+  
+  // Redirecionar para a página de formulário (garanta que o caminho esteja correto)
+  window.location.href = '/formulario'; // Altere '/formulario' conforme necessário para sua estrutura
+}
 
   // Inicializa o mapa após o carregamento da página
   window.onload = initMap;
