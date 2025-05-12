@@ -8,9 +8,13 @@
   const statusAgendamentoElement = document.getElementById('status-agendamento');
 
   if (agendamento) {
+    const dados = JSON.parse(agendamento); // Agora "dados" está definido
+
     statusAgendamentoElement.innerHTML = `
       <div class="card-coleta">
         <p>Você possui um agendamento!</p>
+        <div><strong>${dados.local}</strong> </div>
+        <div class="data-material" style="color: #28a745;"><strong>${dados.data} - <strong>${dados.material}</strong> </div>
         <button onclick="window.location.href='/mapa'">Ver local</button>
       </div>
     `;
