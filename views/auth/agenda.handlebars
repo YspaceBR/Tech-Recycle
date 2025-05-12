@@ -1,0 +1,74 @@
+<a href="#" class="btn-login" id="back-btn" style="font-size: 20px; padding-left: 3vh;" onclick="voltarPagina()">&#x276E;</a>
+<style>
+  .button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .btn-reagendar {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+
+  .btn-reagendar:hover {
+    background-color: darkgreen;
+  }
+
+  .btn-cancelar {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+
+  .btn-cancelar:hover {
+    background-color: darkred;
+  }
+</style>
+
+<div class="card-coleta" id="info-agendamento">
+  <p>Nenhuma coleta agendada</p>
+</div>
+
+<script>
+  const agendamento = localStorage.getItem('agendamento');
+  const card = document.getElementById('info-agendamento');
+
+  if (agendamento) {
+    card.innerHTML = `
+      <p><strong>${agendamento}</strong> agendado com sucesso!</p>
+      <div class="button-container">
+        <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar</button>
+         <button onclick="concluirAgendamento()" class="btn-reagendar">Reagendar</button>
+      </div>
+    `;
+  }
+
+  function concluirAgendamento() {
+    localStorage.setItem('agendamentoStatus', 'feito');
+    const lastPage = document.referrer || '/'; 
+    window.location.href = lastPage;
+  }
+
+  function cancelarAgendamento() {
+    localStorage.removeItem('agendamento');
+    localStorage.setItem('agendamentoStatus', 'cancelado');
+    card.innerHTML = `<p>Agendamento cancelado.</p>`;
+  }
+
+  function voltarPagina() {
+    const lastPage = document.referrer || '/'; 
+    window.location.href = lastPage;
+  }
+</script>
+
+

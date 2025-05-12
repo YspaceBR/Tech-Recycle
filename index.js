@@ -148,9 +148,24 @@
     });
   });
 
+
+  app.get("/agenda", checarAutenticacao, (req, res) => {
+    res.render("auth/agenda", {
+      layout: "auth",
+      navClass: "nav-agenda",
+    });
+  });
+
   app.get("/cadastrar", (req, res) => {
     res.render("public/cadastrar", {
       navClass: "nav-cadastrar",
+    });
+  });
+
+  app.get("/formulario", (req, res) => {  
+    res.render("auth/formulario", {
+      layout: "auth",
+      navClass: "nav-formulario",
     });
   });
 

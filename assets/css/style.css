@@ -675,3 +675,47 @@ span {
 .btn-excluir:hover {
   background-color: #c82333; /* Cor vermelha mais escura */
 }
+
+.card-coleta {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
+  font-family: "Montserrat", sans-serif;
+  color: #333;
+  max-width: 330px;
+  margin: 10px;
+  gap: 10px;
+}
+
+.card-coleta p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+}
+
+.card-coleta strong {
+  font-weight: bold;
+}
+
+.card-coleta button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 12px;
+  width: 100px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-coleta button:hover {
+  background-color: #218838;
+}

@@ -119,12 +119,13 @@
     .btn-agendar:hover {
       background-color: #218838;
     }
+    
   </style>
 </head>
 <body>
 
   <div id="mapa"></div>
-
+ 
   <div class="container" id="coletaContainer">
     <div class="drag-handle" id="handle"></div>
     <div class="titulo">Encontre pontos de coleta e organizações perto de você</div>
@@ -160,7 +161,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" width="25" height="25" fill="#28a745" style="margin-right: 6px; vertical-align: middle;">
           <path d="M16 144a144 144 0 1 1 288 0A144 144 0 1 1 16 144zM160 80c8.8 0 16-7.2 16-16s-7.2-16-16-16c-53 0-96 43-96 96c0 8.8 7.2 16 16 16s16-7.2 16-16c0-35.3 28.7-64 64-64zM128 480l0-162.9c10.4 1.9 21.1 2.9 32 2.9s21.6-1 32-2.9L192 480c0 17.7-14.3 32-32 32s-32-14.3-32-32z"/>
         </svg>
-        PEV’s Estação de Metrô Águas Claras
+        PEV's Estação de Metrô Águas Claras
       </h3>
       <p>Águas Claras, Brasília - DF</p>
       <p class="aberto">Aberto de seg. a sex. das 6h às 23h</p>
@@ -197,16 +198,15 @@
       title: "PEV Metrô",
     });
 
-    // Adicionar popups com botão AGENDAR
     const infoWindows = {
       'E-Reciclagem': new google.maps.InfoWindow({
-        content: "E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"
+        content: "E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('E-Reciclagem')\">AGENDAR</button></div>"
       }),
       'Coleta Municipal': new google.maps.InfoWindow({
-        content: "Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"
+        content: "Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('Coleta Municipal')\">AGENDAR</button></div>"
       }),
       'PEV Metrô': new google.maps.InfoWindow({
-        content: "PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar'>AGENDAR</button></div>"
+        content: "PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('PEV Metrô')\">AGENDAR</button></div>"
       }),
     };
 
@@ -243,6 +243,15 @@
         container.classList.remove('expanded');
       });
     });
+  }
+
+  // Nova função para ir para a página de formulário de agendamento
+  function irParaFormulario(ponto) {
+    // Salvar temporariamente o ponto selecionado
+    localStorage.setItem('pontoTemp', ponto);
+    
+    // Redirecionar para a página de formulário
+    window.location.href = '/formulario';
   }
 
   // Inicializa o mapa após o carregamento da página
