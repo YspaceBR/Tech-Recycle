@@ -4,6 +4,7 @@ Sistema web para incentivar o descarte correto de resíduos, com cadastro e logi
 ## 📁 Estrutura do Projeto
 
 Tech-Recycle/
+<<<<<<< HEAD
 ├── config/
 │   └── db.js                 # Configuração do banco de dados
 ├── controllers/
@@ -18,6 +19,7 @@ Tech-Recycle/
 ├── views/                    # Suas views existentes
 ├── assets/                   # Seus arquivos estáticos existentes
 └── app.js                    # Arquivo principal da aplicação
+
 
 ## 📦 Tecnologias
 
@@ -40,3 +42,4 @@ Tech-Recycle/
 - Cadastro e login de usuários
 - Senha com hash
 - Sessão segura
+
