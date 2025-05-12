@@ -4,18 +4,20 @@ Sistema web para incentivar o descarte correto de resíduos, com cadastro e logi
 ## 📁 Estrutura do Projeto
 
 Tech-Recycle/
-├── assets/ # Arquivos estáticos (CSS, imagens)
-├── controllers/ # Lógica das rotas e controladores
-├── models/ # Acesso ao banco de dados (usuário, etc.)
-├── routes/ # Arquivos de rotas organizadas
-├── views/
-│ ├── layouts/
-│ ├── public/
-│ └── auth/
-├── .env
-├── index.js # Arquivo principal da aplicação
-├── package.json
-└── README.md
+├── config/
+│   └── db.js                 # Configuração do banco de dados
+├── controllers/
+│   ├── authController.js     # Controlador de autenticação
+│   ├── coletaController.js   # Controlador de coletas
+│   └── usuarioController.js  # Controlador de usuários
+├── middlewares/
+│   └── authMiddleware.js     # Middleware de autenticação
+├── routes/
+│   ├── authRoutes.js         # Rotas autenticadas
+│   └── publicRoutes.js       # Rotas públicas
+├── views/                    # Suas views existentes
+├── assets/                   # Seus arquivos estáticos existentes
+└── app.js                    # Arquivo principal da aplicação
 
 ## 📦 Tecnologias
 
@@ -23,6 +25,7 @@ Tech-Recycle/
 - Express
 - MySQL
 - Handlebars
+- bcrypt (hash de senha)
 - express-session
 
 ## 🚀 Como rodar localmente
