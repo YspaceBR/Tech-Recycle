@@ -39,5 +39,6 @@ Tech-Recycle/
 ## ✅ Requisitos Atendidos
 
 - Cadastro e login de usuários
-- Armazenamento de senha com hash (bcrypt)
-- Sessão segura com express-session
+- Armazenamento seguro de senhas com hash (bcrypt)
+- Visualização de pontos de coleta no mapa
+- Agendamento de coletas com data e local

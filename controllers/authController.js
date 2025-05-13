@@ -54,7 +54,6 @@ exports.logout = (req, res) => {
 exports.excluirConta = (req, res) => {
   const userId = req.session.usuario.id;
 
-  // Primeiro, excluir Dispositivos associados às Coletas do usuário
   const deletarDispositivos = `
     DELETE FROM Dispositivo 
     WHERE ID_Coleta IN (
@@ -67,16 +66,14 @@ exports.excluirConta = (req, res) => {
       return res.status(500).send("Erro ao excluir dispositivos");
     }
 
-    // Agora, excluir as Coletas
-    const deletarColetas = "DELETE FROM Coleta WHERE ID_Usuario = ?";
+    const deletarColetas = `DELETE FROM Coleta WHERE ID_Usuario = ?`;
     conn.query(deletarColetas, [userId], (err) => {
       if (err) {
         console.error("Erro ao deletar coletas do usuário:", err);
         return res.status(500).send("Erro ao excluir coletas");
       }
 
-      // Por fim, excluir o usuário
-      const deletarUsuario = "DELETE FROM usuarios WHERE id = ?";
+      const deletarUsuario = `DELETE FROM usuarios WHERE id = ?`;
       conn.query(deletarUsuario, [userId], (err) => {
         if (err) {
           console.error("Erro ao excluir conta:", err);
