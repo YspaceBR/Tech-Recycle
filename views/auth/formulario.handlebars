@@ -211,6 +211,11 @@
       box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.15);
       margin-bottom: 20px;
     }
+
+    /* Estilo para campo oculto */
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -221,72 +226,81 @@
       <h2 id="nome-local">Carregando...</h2>
     </div>
 
-    <div class="agendamento-box">
-      <div class="calendar-section">
-        <h2>Quando será sua coleta?</h2>
-        <div class="month-nav">
-          <span class="nav-arrow" onclick="mudarMes(-1)">&#9664;</span>
-          <span class="month-title" id="mes-ano">Agosto 2025</span>
-          <span class="nav-arrow" onclick="mudarMes(1)">&#9654;</span>
+    <!-- Importante: mudamos para um <form> com método POST -->
+    <form id="coleta-form" action="/agendar-coleta" method="POST">
+      <div class="agendamento-box">
+        <div class="calendar-section">
+          <h2>Quando será sua coleta?</h2>
+          <div class="month-nav">
+            <span class="nav-arrow" onclick="mudarMes(-1)">&#9664;</span>
+            <span class="month-title" id="mes-ano">Agosto 2025</span>
+            <span class="nav-arrow" onclick="mudarMes(1)">&#9654;</span>
+          </div>
+          <div class="week-days">
+            <div class="week-day">Dom</div>
+            <div class="week-day">Seg</div>
+            <div class="week-day">Ter</div>
+            <div class="week-day">Qua</div>
+            <div class="week-day">Qui</div>
+            <div class="week-day">Sex</div>
+            <div class="week-day">Sáb</div>
+          </div>
+          <div class="calendar" id="calendario"></div>
+          <!-- Campo oculto para armazenar a data selecionada -->
+          <input type="hidden" id="data" name="data" required>
         </div>
-        <div class="week-days">
-          <div class="week-day">Dom</div>
-          <div class="week-day">Seg</div>
-          <div class="week-day">Ter</div>
-          <div class="week-day">Qua</div>
-          <div class="week-day">Qui</div>
-          <div class="week-day">Sex</div>
-          <div class="week-day">Sáb</div>
+
+        <div class="material-section">
+          <h2>Quais materiais serão coletados?</h2>
+          <div class="note" id="material-nota">*Essa empresa só realiza coletas Lixos Eletrônicos</div>
+          <select class="dropdown" id="material-select" name="material" required>
+            <option value="">Selecione uma ou mais opções</option>
+            <option value="informatica">Informatica</option>
+            <option value="Eletro Eletronicos">Eletro Eletronicos</option>
+            <option value="Residuos Eletronicos">Residuos Eletronicos</option>
+            <option value="Aparelhos Telefonicos">Aparelhos Telefonicos</option>
+          </select>
         </div>
-        <div class="calendar" id="calendario"></div>
-      </div>
 
-      <div class="material-section">
-        <h2>Quais materiais serão coletados?</h2>
-        <div class="note" id="material-nota">*Essa empresa só realiza coletas Lixos Eletrônicos</div>
-        <select class="dropdown" id="material-select">
-          <option value="">Selecione uma ou mais opções</option>
-          <option value="informatica">Informatica</option>
-          <option value="Eletro Eletronicos">Eletro Eletronicos</option>
-          <option value="Residuos Eletronicos">Residuos Eletronicos</option>
-          <option value="Aparelhos Telefonicos">Aparelhos Telefonicos</option>
-        </select>
-      </div>
-
-      <div class="peso-section">
-        <h2>Qual o peso aproximado da sua separação?</h2>
-        <div class="note" id="peso-nota">*Essa empresa só realiza coletas a partir de 10kg</div>
-        <select class="dropdown" id="peso-select">
-          <option value="">Selecione uma opção</option>
-          <option value="ate5">Até 5kg</option>
-          <option value="5a10">De 5kg a 10kg</option>
-          <option value="10a20">De 10kg a 20kg</option>
-          <option value="mais20">Mais de 20kg</option>
-        </select>
-      </div>
-
-      <div class="toggle-container">
-        <div>
-          <h2>Utilizar endereço e contatos do cadastro</h2>
+        <div class="peso-section">
+          <h2>Qual o peso aproximado da sua separação?</h2>
+          <div class="note" id="peso-nota">*Essa empresa só realiza coletas a partir de 10kg</div>
+          <select class="dropdown" id="peso-select" name="peso" required>
+            <option value="">Selecione uma opção</option>
+            <option value="ate5">Até 5kg</option>
+            <option value="5a10">De 5kg a 10kg</option>
+            <option value="10a20">De 10kg a 20kg</option>
+            <option value="mais20">Mais de 20kg</option>
+          </select>
         </div>
-        <label class="toggle">
-          <input type="checkbox" id="usar-cadastro" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
 
-      <div class="observacao">
-        <h2>Tem alguma observação?</h2>
-        <textarea id="observacao" placeholder="Comente sobre seus itens, horários que estará disponível, etc."></textarea>
-      </div>
+        <div class="toggle-container">
+          <div>
+            <h2>Utilizar endereço e contatos do cadastro</h2>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="usar-cadastro" name="usarCadastro" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
 
-      <button class="btn-agendar" onclick="finalizarAgendamento()">Agendar Coleta</button>
-    </div>
+        <div class="observacao">
+          <h2>Tem alguma observação?</h2>
+          <textarea id="observacao" name="observacao" placeholder="Comente sobre seus itens, horários que estará disponível, etc."></textarea>
+        </div>
+
+        <!-- Campo oculto para enviar o local selecionado -->
+        <input type="hidden" id="local" name="local">
+
+        <button type="submit" class="btn-agendar">Agendar Coleta</button>
+      </div>
+    </form>
   </div>
 
   <script>
     let pontoSelecionado = localStorage.getItem('pontoTemp') || '';
     document.getElementById('nome-local').innerText = pontoSelecionado;
+    document.getElementById('local').value = pontoSelecionado;
 
     function voltarPagina() {
       window.location.href = '/mapa';
@@ -329,6 +343,11 @@
 
             dia.classList.add('active');
             diaSelecionado = new Date(anoAtual, mesAtual, i);
+            
+            // Formatando a data para o formato YYYY-MM-DD para envio ao servidor
+            const mes = (mesAtual + 1).toString().padStart(2, '0');
+            const diaStr = i.toString().padStart(2, '0');
+            document.getElementById('data').value = `${anoAtual}-${mes}-${diaStr}`;
           };
         }
 
@@ -356,53 +375,53 @@
       }
 
       document.getElementById('nome-local').innerText = pontoTemp;
+      document.getElementById('local').value = pontoTemp;
 
       if (pontoTemp === 'E-Reciclagem') {
-        document.getElementById('material-nota').innerText = '*Essa empresa só realiza coletas Livros Eletrônicos';
+        document.getElementById('material-nota').innerText = '*Essa empresa só realiza coletas de Lixos Eletrônicos';
         document.getElementById('peso-nota').innerText = '*Essa empresa só realiza coletas a partir de 10kg';
       }
 
       atualizarCalendario();
+      
+      // Adicionamos validação no formulário antes de enviar
+      document.getElementById('coleta-form').addEventListener('submit', function(event) {
+        if (!document.getElementById('data').value) {
+          event.preventDefault();
+          alert('Por favor, selecione uma data para a coleta');
+          return false;
+        }
+        
+        if (!document.getElementById('material-select').value) {
+          event.preventDefault();
+          alert('Por favor, selecione o tipo de material');
+          return false;
+        }
+        
+        if (!document.getElementById('peso-select').value) {
+          event.preventDefault();
+          alert('Por favor, selecione o peso aproximado');
+          return false;
+        }
+        
+        // Também podemos salvar uma cópia no localStorage para uso no frontend
+        const dataFormatada = diaSelecionado.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const horario = '08:00';
+
+        const agendamento = {
+          data: dataFormatada,
+          horario,
+          material: document.getElementById('material-select').value,
+          peso: document.getElementById('peso-select').value,
+          usarCadastro: document.getElementById('usar-cadastro').checked,
+          observacao: document.getElementById('observacao').value,
+          local: pontoSelecionado
+        };
+
+        localStorage.setItem('agendamento', JSON.stringify(agendamento));
+        localStorage.setItem('agendamentoStatus', 'ativo');
+      });
     };
-
-    function finalizarAgendamento() {
-      if (!diaSelecionado) {
-        alert('Por favor, selecione uma data para a coleta');
-        return;
-      }
-
-      const material = document.getElementById('material-select').value;
-      if (!material) {
-        alert('Por favor, selecione o tipo de material');
-        return;
-      }
-
-      const peso = document.getElementById('peso-select').value;
-      if (!peso) {
-        alert('Por favor, selecione o peso aproximado');
-        return;
-      }
-
-      const usarCadastro = document.getElementById('usar-cadastro').checked;
-      const observacao = document.getElementById('observacao').value;
-
-      const dataFormatada = diaSelecionado.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const horario = '08:00';
-
-      const agendamento = {
-        data: dataFormatada,
-        horario,
-        material,
-        peso,
-        usarCadastro,
-        observacao,
-        local: pontoSelecionado
-      };
-
-      localStorage.setItem('agendamento', JSON.stringify(agendamento));
-      localStorage.setItem('agendamentoStatus', 'ativo');
-      window.location.href = '/principal';
-    }
   </script>
 </body>
 </html>

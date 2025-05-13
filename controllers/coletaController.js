@@ -1,50 +1,59 @@
 const conn = require("../config/db");
 
-// Controller de coleta
 exports.agendarColeta = async (req, res) => {
-  const {
-    data,
-    material,
-    peso,
-    observacao,
-    usarCadastro,
-    local
-  } = req.body;
-
-  const idUsuario = req.session.usuario.id;
-
-  if (!local) {
-    return res.status(400).send('Local de coleta não informado');
+  try {
+    // Pegando os dados do corpo da requisição
+    const {
+      data,
+      material,
+      peso,
+      observacao,
+      usarCadastro,
+      local
+    } = req.body;
+    
+    // Verificando se o usuário está logado
+    if (!req.session || !req.session.usuario || !req.session.usuario.id) {
+      return res.status(401).send('Usuário não autenticado');
+    }
+    
+    const idUsuario = req.session.usuario.id;
+    
+    // Validação dos campos obrigatórios
+    if (!data) {
+      return res.status(400).send('Data não informada');
+    }
+    
+    if (!material) {
+      return res.status(400).send('Material não informado');
+    }
+    
+    // Inserindo na tabela Coleta sem referência à empresa
+    const coletaQuery = 'INSERT INTO Coleta (Data, ID_Usuario, Local) VALUES (?, ?, ?)';
+    const [coletaResult] = await conn.promise().query(coletaQuery, [data, idUsuario, local]);
+    
+    const idColeta = coletaResult.insertId; // Pega o ID da coleta inserida
+    
+    // Insere na tabela de Dispositivo
+    const dispositivoQuery = 'INSERT INTO Dispositivo (Tipo, ID_Coleta, ID_Usuario) VALUES (?, ?, ?)';
+    await conn.promise().query(dispositivoQuery, [material, idColeta, idUsuario]);
+    
+    // Se tiver observação, podemos salvar
+    if (observacao) {
+      const obsQuery = 'UPDATE Coleta SET Observacao = ? WHERE ID_Coleta = ?';
+      await conn.promise().query(obsQuery, [observacao, idColeta]);
+    }
+    
+    // Se tiver informação de peso, podemos salvar
+    if (peso) {
+      const pesoQuery = 'UPDATE Dispositivo SET Peso = ? WHERE ID_Coleta = ?';
+      await conn.promise().query(pesoQuery, [peso, idColeta]);
+    }
+    
+    // Redireciona para a página principal
+    res.redirect('/principal');
+  } catch (error) {
+    console.error('Erro ao inserir agendamento:', error);
+    res.status(500).send('Erro ao salvar agendamento');
   }
-
-  conn.query('SELECT ID_Empresa FROM Empresa WHERE NomeEmpresa = ?', [local], async (err, results) => {
-    if (err) {
-      console.error('Erro ao buscar empresa:', err);
-      return res.status(500).send('Erro ao buscar empresa');
-    }
-
-    if (results.length === 0) {
-      return res.status(400).send('Empresa não encontrada');
-    }
-
-    const idEmpresa = results[0].ID_Empresa;
-
-    try {
-      // Debug: Verifique os valores antes de inserir
-      console.log(`Data: ${data}, ID_Usuario: ${idUsuario}, ID_Empresa: ${idEmpresa}`);
-
-      const coletaQuery = 'INSERT INTO Coleta (Data, ID_Usuario, ID_Empresa) VALUES (?, ?, ?)';
-      const [coletaResult] = await conn.promise().query(coletaQuery, [data, idUsuario, idEmpresa]);
-
-      const idColeta = coletaResult.insertId; // Pega o ID da coleta inserida
-
-      const dispositivoQuery = 'INSERT INTO Dispositivo (Tipo, ID_Coleta, ID_Usuario) VALUES (?, ?, ?)';
-      await conn.promise().query(dispositivoQuery, [material, idColeta, idUsuario]);
-
-      res.redirect('/principal');
-    } catch (err) {
-      console.error('Erro ao inserir agendamento ou dispositivo:', err);
-      res.status(500).send('Erro ao salvar agendamento');
-    }
-  });
 };

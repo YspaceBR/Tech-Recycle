@@ -36,7 +36,7 @@
       box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
       transform: translateY(70%);
       transition: transform 0.3s ease;
-      overflow-y: scroll; /* Aqui permite a rolagem */
+      overflow-y: scroll;
       z-index: 999;
     }
 
@@ -119,13 +119,12 @@
     .btn-agendar:hover {
       background-color: #218838;
     }
-    
   </style>
 </head>
 <body>
 
   <div id="mapa"></div>
- 
+
   <div class="container" id="coletaContainer">
     <div class="drag-handle" id="handle"></div>
     <div class="titulo">Encontre pontos de coleta e organizações perto de você</div>
@@ -179,7 +178,6 @@
       zoom: 12,
     });
 
-    // Criar marcadores
     markers['E-Reciclagem'] = new google.maps.Marker({
       position: { lat: -15.8311, lng: -48.0554 },
       map: map,
@@ -198,27 +196,24 @@
       title: "PEV Metrô",
     });
 
- const infoWindows = {
-  'E-Reciclagem': new google.maps.InfoWindow({
-    content: "E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('E-Reciclagem')\">AGENDAR</button></div>"
-  }),
-  'Coleta Municipal': new google.maps.InfoWindow({
-    content: "Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('Coleta Municipal')\">AGENDAR</button></div>"
-  }),
-  'PEV Metrô': new google.maps.InfoWindow({
-    content: "PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('PEV Metrô')\">AGENDAR</button></div>"
-  }),
-};
+    const infoWindows = {
+      'E-Reciclagem': new google.maps.InfoWindow({
+        content: "E-Reciclagem - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('E-Reciclagem')\">AGENDAR</button></div>"
+      }),
+      'Coleta Municipal': new google.maps.InfoWindow({
+        content: "Coleta Municipal - Taguatinga Sul <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('Coleta Municipal')\">AGENDAR</button></div>"
+      }),
+      'PEV Metrô': new google.maps.InfoWindow({
+        content: "PEV Metrô - Águas Claras <div style='text-align:center'><button class='btn-agendar' onclick=\"irParaFormulario('PEV Metrô')\">AGENDAR</button></div>"
+      }),
+    };
 
-
-    // Abrir popup ao clicar no marcador
     for (const key in markers) {
       markers[key].addListener('click', () => {
         infoWindows[key].open(map, markers[key]);
       });
     }
 
-    // Cards - interações
     const container = document.getElementById('coletaContainer');
     const handle = document.getElementById('handle');
     handle.addEventListener('click', () => {
@@ -230,7 +225,6 @@
       card.addEventListener('click', () => {
         const lat = parseFloat(card.dataset.lat);
         const lng = parseFloat(card.dataset.lng);
-
         map.panTo({ lat, lng });
         map.setZoom(16);
 
@@ -246,16 +240,11 @@
     });
   }
 
- // Nova função para ir para a página de formulário de agendamento
-function irParaFormulario(ponto) {
-  // Salvar temporariamente o ponto selecionado no localStorage
-  localStorage.setItem('pontoTemp', ponto);
-  
-  // Redirecionar para a página de formulário (garanta que o caminho esteja correto)
-  window.location.href = '/formulario'; // Altere '/formulario' conforme necessário para sua estrutura
-}
+  function irParaFormulario(ponto) {
+    localStorage.setItem('pontoTemp', ponto);
+    window.location.href = '/formulario'; // ajuste se o caminho for diferente
+  }
 
-  // Inicializa o mapa após o carregamento da página
   window.onload = initMap;
 </script>
 

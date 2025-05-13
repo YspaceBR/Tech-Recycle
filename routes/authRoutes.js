@@ -17,6 +17,6 @@ router.get("/agenda", usuarioController.getAgenda);
 router.get("/formulario", usuarioController.getFormulario);
 
 // Rota para agendamento de coleta
-router.post("/agendar", coletaController.agendarColeta);
+router.post("/agendar-coleta", coletaController.agendarColeta);
 
 module.exports = router;
