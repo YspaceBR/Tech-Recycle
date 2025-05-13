@@ -40,5 +40,4 @@ Tech-Recycle/
 
 - Cadastro e login de usuários
 - Armazenamento de senha com hash (bcrypt)
-- Senha com hash
 - Sessão segura com express-session
