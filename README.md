@@ -38,7 +38,10 @@ Tech-Recycle/
 
 ## ✅ Requisitos Atendidos
 
+### Funcionais
 - Cadastro e login de usuários
-- Armazenamento seguro de senhas com hash (bcrypt)
 - Visualização de pontos de coleta no mapa
 - Agendamento de coletas com data e local
+
+### Não Funcionais
+- Armazenamento seguro de senhas com hash (bcrypt)
