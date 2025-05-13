@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const usuarioController = require("../controllers/usuarioController");
 const coletaController = require("../controllers/coletaController");
+const authController = require("../controllers/authController"); // <- ESSA LINHA FALTAVA
 const { checarAutenticacao } = require("../middlewares/authMiddleware");
 
 // Aplicar middleware de autenticação para todas as rotas
@@ -18,5 +19,8 @@ router.get("/formulario", usuarioController.getFormulario);
 
 // Rota para agendamento de coleta
 router.post("/agendar-coleta", coletaController.agendarColeta);
+
+// Rota de exclusão de conta
+router.post("/excluir", authController.excluirConta);
 
 module.exports = router;
