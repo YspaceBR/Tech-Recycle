@@ -29,16 +29,16 @@ Tech-Recycle/
 - bcrypt (hash de senha)
 - express-session
 
-  ## 🚀 Como rodar localmente
+## 🚀 Como rodar localmente
 
-  1. Clone o repositório
-  2. Instale as dependências: `npm install`
-  3. Configure o `.env` com os dados do MySQL
-  4. Inicie com `npm start`
+1. Clone o repositório
+2. Instale as dependências: `npm install`
+3. Configure o `.env` com os dados do MySQL
+4. Inicie com `npm start`
 
-  ## ✅ Requisitos Atendidos
+## ✅ Requisitos Atendidos
 
-  - Cadastro e login de usuários
-  - Armazenamento de senha com hash (bcrypt)
-  - Senha com hash
-  - Sessão segura com express-session
+- Cadastro e login de usuários
+- Armazenamento de senha com hash (bcrypt)
+- Senha com hash
+- Sessão segura com express-session
