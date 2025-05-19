@@ -330,13 +330,14 @@
 
       for (let i = 1; i <= ultimoDia.getDate(); i++) {
         const dia = document.createElement('div');
+        const hojeLimpo = new Date();
         dia.className = 'day';
         dia.innerText = i;
 
         const dataAtual = new Date(anoAtual, mesAtual, i);
-        if (dataAtual < hoje) {
-          dia.className = 'day disabled';
-        } else {
+        if (dataAtual < hojeLimpo) {
+        dia.className = 'day disabled';
+        } else  {
           dia.onclick = function () {
             const diasAtivos = document.querySelectorAll('.day.active');
             diasAtivos.forEach(d => d.classList.remove('active'));
