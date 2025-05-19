@@ -124,104 +124,320 @@
       carregarAgendamento();
     });
     
-    function carregarAgendamento() {
-      const agendamentoStr = localStorage.getItem('agendamento');
-      const card = document.getElementById('info-agendamento');
-      const mensagem = document.getElementById('mensagem-agendamento');
-      const extra = document.getElementById('info-extra');
+   function carregarAgendamento() {
+  const agendamentoStr = localStorage.getItem('agendamento');
+  const card = document.getElementById('info-agendamento');
+  const mensagem = document.getElementById('mensagem-agendamento');
+  const extra = document.getElementById('info-extra');
+  
+  console.log('Dados brutos do localStorage:', agendamentoStr);
+  
+  if (agendamentoStr) {
+    try {
+      const dados = JSON.parse(agendamentoStr);
+      console.log('Dados do agendamento:', dados);
+
+      // Verificação melhorada para data obrigatória
+      if (!dados.data || dados.data === '' || dados.data === 'Data não especificada') {
+        // Mostrar alerta e redirecionar para o formulário
+        alert('⚠️ ATENÇÃO: Você ainda não informou a data da coleta!\n\n' +
+              'Para completar seu agendamento, é necessário selecionar uma data.\n' +
+              'Você será redirecionado para o formulário.');
+        
+        // Limpar dados incompletos
+        localStorage.removeItem('agendamento');
+        
+        // Redirecionar para o formulário após um breve delay
+        setTimeout(() => {
+          window.location.href = '/formulario';
+        }, 2000);
+        
+        // Mostrar mensagem de agendamento incompleto
+        mensagem.style.display = 'block';
+        mensagem.textContent = 'Agendamento incompleto - redirecionando...';
+        card.style.display = 'none';
+        extra.innerHTML = '';
+        return;
+      }
+
+      // Verificar se a data está no formato correto
+      if (!validarFormatoData(dados.data)) {
+        alert('⚠️ ERRO: Data em formato inválido!\n\n' +
+              'Por favor, selecione uma data válida no calendário.');
+        
+        localStorage.removeItem('agendamento');
+        setTimeout(() => {
+          window.location.href = '/formulario';
+        }, 2000);
+        return;
+      }
       
-      console.log('Dados brutos do localStorage:', agendamentoStr);
+      // Continuar com o processamento normal se a data estiver presente e válida
+      mensagem.style.display = 'none';
+      card.style.display = 'block';
       
-      if (agendamentoStr) {
-        try {
-          const dados = JSON.parse(agendamentoStr);
-          console.log('Dados do agendamento:', dados);
-          
-          mensagem.style.display = 'none';
-          card.style.display = 'block';
-          
-          // Verificar e converter o ID da coleta para número
-          if (dados.idColeta) {
-            const idColetaNum = parseInt(dados.idColeta);
-            if (!isNaN(idColetaNum)) {
-              card.dataset.idColeta = idColetaNum;
-              console.log('ID da coleta definido:', card.dataset.idColeta);
-            } else {
-              console.error('ID da coleta inválido:', dados.idColeta);
-            }
-          }
-          
-          card.innerHTML = `
-            <div><strong>${dados.local || 'Local não especificado'}</strong></div>
-            <div class="data-material">${dados.data || 'Data não especificada'} - ${dados.material || 'Material não especificado'}</div>
-          `;
-          
-          extra.innerHTML = `
-            <div class="nota">
-              *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
-            </div>
-            <div class="button-container">
-              <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar coleta</button>
-              <button onclick="reagendar()" class="btn-reagendar">Reagendar</button>
-            </div>
-          `;
-        } catch (e) {
-          console.error('Erro ao processar dados do agendamento:', e);
+      // Verificar e converter o ID da coleta para número
+      if (dados.idColeta) {
+        const idColetaNum = parseInt(dados.idColeta);
+        if (!isNaN(idColetaNum)) {
+          card.dataset.idColeta = idColetaNum;
+          console.log('ID da coleta definido:', card.dataset.idColeta);
+        } else {
+          console.error('ID da coleta inválido:', dados.idColeta);
         }
+      }
+      
+      // Formatar a data para exibição
+      const dataFormatada = formatarDataExibicao(dados.data);
+      
+      card.innerHTML = `
+        <div><strong>${dados.local || 'Local não especificado'}</strong></div>
+        <div class="data-material">${dataFormatada} - ${dados.material || 'Material não especificado'}</div>
+      `;
+      
+      extra.innerHTML = `
+        <div class="nota">
+          *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
+        </div>
+        <div class="button-container">
+          <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar coleta</button>
+          <button onclick="reagendar()" class="btn-reagendar">Reagendar</button>
+        </div>
+      `;
+    } catch (e) {
+      console.error('Erro ao processar dados do agendamento:', e);
+      alert('Erro ao carregar agendamento. Os dados podem estar corrompidos.');
+      localStorage.removeItem('agendamento');
+    }
+  } else {
+    // Não há agendamento salvo
+    mensagem.style.display = 'block';
+    mensagem.textContent = 'Nenhuma coleta agendada';
+    card.style.display = 'none';
+    extra.innerHTML = '';
+  }
+}
+
+// Função para validar o formato da data
+function validarFormatoData(data) {
+  if (!data) return false;
+  
+  // Verificar se está no formato DD/MM/AAAA ou AAAA-MM-DD
+  const formatoBR = /^\d{2}\/\d{2}\/\d{4}$/;
+  const formatoISO = /^\d{4}-\d{2}-\d{2}$/;
+  
+  if (formatoBR.test(data)) {
+    // Verificar se é uma data válida
+    const [dia, mes, ano] = data.split('/').map(Number);
+    const dataObj = new Date(ano, mes - 1, dia);
+    return dataObj.getDate() === dia && 
+           dataObj.getMonth() === mes - 1 && 
+           dataObj.getFullYear() === ano;
+  }
+  
+  if (formatoISO.test(data)) {
+    // Verificar se é uma data válida
+    const dataObj = new Date(data);
+    return !isNaN(dataObj.getTime());
+  }
+  
+  return false;
+}
+
+// Função para formatar data para exibição
+function formatarDataExibicao(data) {
+  if (!data) return 'Data não especificada';
+  
+  // Se estiver no formato ISO (AAAA-MM-DD), converter para DD/MM/AAAA
+  if (data.includes('-') && data.length === 10) {
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+  
+  // Se já estiver no formato brasileiro, retornar como está
+  return data;
+}
+
+// Função melhorada para salvar agendamento com validação de data
+function salvarAgendamento(dados) {
+  // Validar se a data foi fornecida
+  if (!dados.data) {
+    alert('⚠️ ERRO: É obrigatório selecionar uma data para a coleta!');
+    return false;
+  }
+  
+  // Validar formato da data
+  if (!validarFormatoData(dados.data)) {
+    alert('⚠️ ERRO: Data em formato inválido! Use o calendário para selecionar uma data válida.');
+    return false;
+  }
+  
+  // Verificar se a data não é no passado
+  const hoje = new Date();
+  const dataColeta = new Date(dados.data);
+  
+  // Resetar as horas para comparar apenas as datas
+  hoje.setHours(0, 0, 0, 0);
+  dataColeta.setHours(0, 0, 0, 0);
+  
+  if (dataColeta < hoje) {
+    alert('⚠️ ERRO: Não é possível agendar coleta para uma data no passado!');
+    return false;
+  }
+  
+  // Converter data para formato padrão se necessário
+  if (dados.data.includes('-')) {
+    // Está no formato ISO, converter para DD/MM/AAAA para exibição
+    const [ano, mes, dia] = dados.data.split('-');
+    dados.dataExibicao = `${dia}/${mes}/${ano}`;
+  } else {
+    dados.dataExibicao = dados.data;
+  }
+  
+  // Salvar no localStorage
+  try {
+    localStorage.setItem('agendamento', JSON.stringify(dados));
+    console.log('Agendamento salvo com sucesso:', dados);
+    return true;
+  } catch (error) {
+    console.error('Erro ao salvar agendamento:', error);
+    alert('Erro ao salvar agendamento. Tente novamente.');
+    return false;
+  }
+}
+
+// Função para configurar input de data no calendário
+function configurarCalendario() {
+  const inputData = document.getElementById('data-coleta');
+  if (!inputData) return;
+  
+  // Definir data mínima como hoje
+  const hoje = new Date();
+  const dataMinima = hoje.toISOString().split('T')[0];
+  inputData.setAttribute('min', dataMinima);
+  
+  // Adicionar listener para validação em tempo real
+  inputData.addEventListener('change', function() {
+    const dataSelecionada = this.value;
+    
+    if (!dataSelecionada) {
+      this.setCustomValidity('Por favor, selecione uma data para a coleta.');
+      return;
+    }
+    
+    const dataColeta = new Date(dataSelecionada);
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    if (dataColeta < hoje) {
+      this.setCustomValidity('Não é possível agendar para uma data no passado.');
+      alert('⚠️ ERRO: Não é possível agendar coleta para uma data no passado!');
+      this.value = '';
+      return;
+    }
+    
+    // Verificar se é fim de semana (opcional)
+    const diaSemana = dataColeta.getDay();
+    if (diaSemana === 0 || diaSemana === 6) {
+      const confirmar = confirm('⚠️ ATENÇÃO: Você selecionou um fim de semana.\n\n' +
+                               'Deseja continuar? (A coleta pode não estar disponível aos fins de semana)');
+      if (!confirmar) {
+        this.value = '';
+        return;
       }
     }
     
-    async function cancelarAgendamento() {
-      const card = document.getElementById('info-agendamento');
-      const mensagem = document.getElementById('mensagem-agendamento');
-      const extra = document.getElementById('info-extra');
-      
-      let idColeta = card.dataset.idColeta;
-      idColeta = parseInt(idColeta);
-      
-      console.log('Tentando cancelar coleta com ID:', idColeta);
-      
-      if (!idColeta || isNaN(idColeta)) {
-        console.error('ID da coleta inválido:', idColeta);
-        return alert('ID da coleta inválido ou não encontrado.');
-      }
-      
-      try {
-        const res = await fetch('/cancelar-coleta', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idColeta })
-        });
-        
-        console.log('Status da resposta:', res.status);
-        const json = await res.json();
-        console.log('Resposta completa:', json);
-        
-        if (json.sucesso) {
-          localStorage.removeItem('agendamento');
-          localStorage.setItem('agendamentoStatus', 'cancelado');
-          
-          mensagem.style.display = 'block';
-          mensagem.textContent = 'Nenhuma coleta agendada';
-          card.style.display = 'none';
-          extra.innerHTML = `<div class="nota">Agendamento cancelado com sucesso.</div>`;
-        } else {
-          alert('Não foi possível cancelar: ' + json.mensagem);
-        }
-      } catch (err) {
-        console.error('Erro detalhado:', err);
-        alert('Erro na requisição de cancelamento. Verifique o console para mais detalhes.');
-      }
-    }
+    this.setCustomValidity('');
+    console.log('Data selecionada:', dataSelecionada);
+  });
+  
+  // Adicionar validação visual
+  inputData.addEventListener('invalid', function() {
+    this.style.borderColor = '#e74c3c';
+  });
+  
+  inputData.addEventListener('input', function() {
+    this.style.borderColor = '';
+  });
+}
 
-    function reagendar() {
-      window.location.href = '/mapa';
+async function cancelarAgendamento() {
+  const card = document.getElementById('info-agendamento');
+  const mensagem = document.getElementById('mensagem-agendamento');
+  const extra = document.getElementById('info-extra');
+  
+  let idColeta = card.dataset.idColeta;
+  idColeta = parseInt(idColeta);
+  
+  console.log('Tentando cancelar coleta com ID:', idColeta);
+  
+  if (!idColeta || isNaN(idColeta)) {
+    console.error('ID da coleta inválido:', idColeta);
+    return alert('ID da coleta inválido ou não encontrado.');
+  }
+  
+  // Confirmar cancelamento
+  const confirmar = confirm('⚠️ CONFIRMAÇÃO\n\nTem certeza que deseja cancelar esta coleta?\n\nEsta ação não pode ser desfeita.');
+  if (!confirmar) return;
+  
+  try {
+    const res = await fetch('/cancelar-coleta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idColeta })
+    });
+    
+    console.log('Status da resposta:', res.status);
+    const json = await res.json();
+    console.log('Resposta completa:', json);
+    
+    if (json.sucesso) {
+      localStorage.removeItem('agendamento');
+      localStorage.setItem('agendamentoStatus', 'cancelado');
+      
+      mensagem.style.display = 'block';
+      mensagem.textContent = 'Nenhuma coleta agendada';
+      card.style.display = 'none';
+      extra.innerHTML = `
+        <div class="nota" style="color: #27ae60; background-color: #d5f4e6; padding: 10px; border-radius: 5px;">
+          ✅ Agendamento cancelado com sucesso.
+        </div>
+      `;
+      
+      // Mostrar opção para novo agendamento após alguns segundos
+      setTimeout(() => {
+        extra.innerHTML += `
+          <div class="button-container" style="margin-top: 15px;">
+            <button onclick="window.location.href='/formulario'" class="btn-reagendar">
+              Fazer novo agendamento
+            </button>
+          </div>
+        `;
+      }, 2000);
+      
+    } else {
+      alert('❌ Não foi possível cancelar: ' + (json.mensagem || 'Erro desconhecido'));
     }
+  } catch (err) {
+    console.error('Erro detalhado:', err);
+    alert('❌ Erro na requisição de cancelamento. Verifique sua conexão e tente novamente.');
+  }
+}
 
-    function voltarPagina() {
-      const lastPage = document.referrer || '/';
-      window.location.href = lastPage;
-    }
+function reagendar() {
+  window.location.href = '/formulario';
+}
+
+function voltarPagina() {
+  const lastPage = document.referrer || '/';
+  window.location.href = lastPage;
+}
+
+// Inicializar quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+  carregarAgendamento();
+  configurarCalendario();
+});
   </script>
 </body>
 </html>
