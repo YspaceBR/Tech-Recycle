@@ -1,152 +1,179 @@
-<a href="#" class="btn-login" id="back-btn" style="font-size: 20px; margin-bottom: 15px" onclick="voltarPagina()">&#x276E;</a>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Minhas Coletas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    .formulario-coleta {
+      background-color: #f5f5f5;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+      margin: 5px 10px;
+    }
+    .formulario-coleta strong {
+      display: block;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 600;
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+    .formulario-coleta .data-material {
+      color: #04b700;
+      font-weight: 500;
+      font-family: "Montserrat", sans-serif;
+      font-size: 15px;
+      margin-top: 20px;
+    }
+    .nota {
+      font-family: "SourceCodePro", sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      color: gray;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding: 0 5px;
+    }
+    .button-container {
+      display: flex;
+      gap: 12vh;
+      margin-top: 10px;
+    }
+    .btn-cancelar {
+      background-color: #ff3b3b;
+      color: white;
+      width: 180px;
+      padding: 10px 0;
+      font-weight: 600;
+      font-family: "Montserrat", sans-serif;
+      border: none;
+      font-size: 15px;
+      border-radius: 8px;
+    }
+    .btn-cancelar:hover {
+      background-color: #cc2e2e;
+    }
+    .btn-reagendar {
+      background-color: white;
+      color: #04b700;
+      border: 1px solid #04b700;
+      width: 180px;
+      font-family: "Montserrat", sans-serif;
+      padding: 10px 0;
+      font-weight: 600;
+      font-size: 15px;
+      border-radius: 8px;
+    }
+    .btn-reagendar:hover {
+      color: white;
+      background-color: #28a745;
+    }
+    .btn-login {
+      display: inline-block;
+      margin: 10px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#" class="btn-login" id="back-btn" onclick="voltarPagina()">&#x276E;</a>
 
-<style>
-.formulario-coleta {
-  background-color: #f5f5f5;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 10px;
-  margin: 5px 10px;
-}
+  <!-- Mensagem que fica acima do card -->
+  <h3 id="mensagem-agendamento" style="font-size: 16px;font-weight: 600;margin-left: 10px; margin-top:2vh">Nenhuma coleta agendada</h3>
 
-.formulario-coleta strong {
-  display: block;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  color: #333;
-  font-size: 18px;
-  margin-bottom: 6px;
-}
+  <!-- Card com os dados -->
+  <div class="formulario-coleta" id="info-agendamento" style="display: none;" data-id-coleta=""></div>
 
-.formulario-coleta .data-material {
-  color: #04b700;
-  font-weight: 500;
-  font-family: "Montserrat", sans-serif;
-  font-size: 15px;
-   margin-top: 20px;
-}
+  <!-- Elementos abaixo do card -->
+  <div id="info-extra" style="margin-bottom: 10px; padding: 10px"></div>
 
-.nota {
-  font-family: "SourceCodePro", sans-serif;
-  font-weight: 500;
-  font-size: 12px;
-  color: gray;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  padding: 0 5px;
-}
+  <h3 style="margin-left: 10px; margin-top:20px; font-weight: 600;">Acesse o mapa para agendar<br>novas coletas a domicílio</h3>
 
-.button-container {
-  display: flex;
-  gap: 12vh;
-  margin-top: 10px;
-}
+  <div class="container-maps" style="margin-left: 10px;">
+    <button class="pontos-maps" onclick="window.location.href='/mapa'">
+      Ir para o mapa
+    </button>
+  </div>
 
-.btn-cancelar {
-  background-color: #ff3b3b;
-  color: white;
-  width: 180px;
-  padding: 10px 0;
-  font-weight: 600;
-  font-family: "Montserrat", sans-serif;
-  border: none;
-  font-size: 15px;
-  border-radius: 8px;
-}
+  <script>
+    const agendamentoStr = localStorage.getItem('agendamento');
+    const card = document.getElementById('info-agendamento');
+    const mensagem = document.getElementById('mensagem-agendamento');
+    const extra = document.getElementById('info-extra');
 
-.btn-cancelar:hover {
-  background-color: #cc2e2e;
-}
+    if (agendamentoStr) {
+      const dados = JSON.parse(agendamentoStr);
 
-.btn-reagendar {
-  background-color: white;
-  color: #04b700;
-  border: 1px solid #04b700;
-  width: 180px;
-  font-family: "Montserrat", sans-serif;
-  padding: 10px 0;
-  font-weight: 600;
-  font-size: 15px;
-  border-radius: 8px;
-}
+      mensagem.style.display = 'none';
+      card.style.display = 'block';
 
-.btn-reagendar:hover {
-  color: white;
-  background-color: #28a745;
-}
-</style>
+      // Guarda o id da coleta para futura requisição de cancelamento
+      if (dados.idColeta) {
+        card.dataset.idColeta = dados.idColeta;
+      }
 
-<!-- Mensagem que fica acima do card -->
-<h3 id="mensagem-agendamento" style="font-size: 16px;font-weight: 600;margin-left: 10px; margin-top:2vh">Nenhuma coleta agendada</h3>
+      card.innerHTML = `
+        <div><strong>${dados.local}</strong></div>
+        <div class="data-material">${dados.data} - ${dados.material}</div>
+      `;
 
-<!-- Card com os dados -->
-<div class="formulario-coleta" id="info-agendamento" style="display: none;"></div>
+      extra.innerHTML = `
+        <div class="nota">
+          *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
+        </div>
+        <div class="button-container">
+          <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar coleta</button>
+          <button onclick="reagendar()" class="btn-reagendar">Reagendar</button>
+        </div>
+      `;
+    }
 
+    function concluirAgendamento() {
+      localStorage.setItem('agendamentoStatus', 'feito');
+      const lastPage = document.referrer || '/';
+      window.location.href = lastPage;
+    }
 
-<!-- Elementos abaixo do card -->
-<div id="info-extra" style="margin-bottom: 10px; padding: 10px"></div>
+    async function cancelarAgendamento() {
+      const idColeta = card.dataset.idColeta;
+      if (!idColeta) {
+        return alert('ID da coleta não encontrado.');
+      }
 
+      try {
+        const res = await fetch('/cancelar-coleta', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idColeta })
+        });
+        const json = await res.json();
+        if (json.sucesso) {
+          // Limpa o storage e atualiza UI
+          localStorage.removeItem('agendamento');
+          localStorage.setItem('agendamentoStatus', 'cancelado');
 
-<h3 style="margin-left: 10px; margin-top:20px; font-weight: 600;">Acesse o mapa para agendar<br>novas coletas a domicílio</h3>
+          mensagem.style.display = 'block';
+          card.style.display = 'none';
+          extra.innerHTML = `<div class="nota">Agendamento cancelado.</div>`;
+        } else {
+          alert('Não foi possível cancelar: ' + json.mensagem);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Erro na requisição de cancelamento.');
+      }
+    }
 
-<div class="container-maps" style="margin-left: 10px;">
-  <button class="pontos-maps" onclick="window.location.href='/mapa'">
-    Ir para o mapa
-  </button>
-</div>
+    function reagendar() {
+      window.location.href = '/mapa';
+    }
 
-<script>
-const agendamento = localStorage.getItem('agendamento');
-const card = document.getElementById('info-agendamento');
-const mensagem = document.getElementById('mensagem-agendamento');
-const extra = document.getElementById('info-extra');
-
-if (agendamento) {
-  const dados = JSON.parse(agendamento);
-
-  mensagem.style.display = 'none';
-  card.style.display = 'block'; 
-
-  card.innerHTML = `
-    <div>
-      <strong>${dados.local}</strong>
-    </div>
-    <div class="data-material">${dados.data} - ${dados.material}</div>
-  `;
-
-  extra.innerHTML = `
-    <div class="nota"">
-      *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
-    </div>
-    <div class="button-container">
-      <button onclick="cancelarAgendamento()"  class="btn-cancelar">Cancelar coleta</button>
-      <button onclick="concluirAgendamento()"  class="btn-reagendar">Reagendar</button>
-    </div>
-  `;
-}
-
-function concluirAgendamento() {
-  localStorage.setItem('agendamentoStatus', 'feito');
-  const lastPage = document.referrer || '/';
-  window.location.href = lastPage;
-}
-
-function cancelarAgendamento() {
-  localStorage.removeItem('agendamento');
-  localStorage.setItem('agendamentoStatus', 'cancelado');
-
-  // Atualiza interface
-  document.getElementById('mensagem-agendamento').style.display = 'block';
-  document.getElementById('info-agendamento').innerHTML = '';
-  document.getElementById('info-extra').innerHTML = `<div class="nota">Agendamento cancelado.</div>`;
-}
-
-
-
-
-
-function voltarPagina() {
-  const lastPage = document.referrer || '/';
-  window.location.href = lastPage;
-}
-</script>
+    function voltarPagina() {
+      const lastPage = document.referrer || '/';
+      window.location.href = lastPage;
+    }
+  </script>
+</body>
+</html>
