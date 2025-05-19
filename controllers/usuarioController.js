@@ -60,7 +60,7 @@ exports.getAgenda = (req, res) => {
 };
 
 exports.getBusca = (req, res) => {
-  res.render("auth/busca", { layout: "auth", navClass: "nav-busca" });
+  res.render("auth/busca", { layout: "maps", navClass: "nav-busca" });
 };
 
 exports.getFormulario = (req, res) => {
