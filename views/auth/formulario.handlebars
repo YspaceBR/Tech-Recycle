@@ -377,7 +377,7 @@
       document.getElementById('nome-local').innerText = pontoTemp;
       document.getElementById('local').value = pontoTemp;
 
-      if (pontoTemp === 'E-Reciclagem') {
+      if (pontoTemp === 'Tech-Recycle') {
         document.getElementById('material-nota').innerText = '*Essa empresa só realiza coletas de Lixos Eletrônicos';
         document.getElementById('peso-nota').innerText = '*Essa empresa só realiza coletas a partir de 10kg';
       }
@@ -404,7 +404,6 @@
           return false;
         }
         
-        // Também podemos salvar uma cópia no localStorage para uso no frontend
         const dataFormatada = diaSelecionado.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const horario = '08:00';
 

@@ -98,4 +98,5 @@ exports.cancelarColeta = async (req, res) => {
     console.error('Erro ao cancelar coleta:', error);
     return res.status(500).json({ sucesso: false, mensagem: 'Erro ao cancelar coleta' });
   }
-};
+
+}

@@ -119,8 +119,8 @@ if (agendamento) {
       *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
     </div>
     <div class="button-container">
-      <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar coleta</button>
-      <button onclick="concluirAgendamento()" class="btn-reagendar">Reagendar</button>
+      <button onclick="cancelarAgendamento()"  class="btn-cancelar">Cancelar coleta</button>
+      <button onclick="concluirAgendamento()"  class="btn-reagendar">Reagendar</button>
     </div>
   `;
 }
@@ -140,6 +140,10 @@ function cancelarAgendamento() {
   document.getElementById('info-agendamento').innerHTML = '';
   document.getElementById('info-extra').innerHTML = `<div class="nota">Agendamento cancelado.</div>`;
 }
+
+
+
+
 
 function voltarPagina() {
   const lastPage = document.referrer || '/';
