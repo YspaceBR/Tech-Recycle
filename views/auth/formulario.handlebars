@@ -9,25 +9,21 @@
       max-width: 600px;
       margin: 0 auto;
     }
-
     .header {
       display: flex;
       align-items: center;
       margin-bottom: 20px;
     }
-
     .back-btn {
       font-size: 20px;
       text-decoration: none;
       color: #333;
       margin-right: 15px;
     }
-
     .local-card {
       margin-top: 10px;
       box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.15);
     }
-
     .local-card,
     .calendar-section,
     .material-section,
@@ -39,14 +35,12 @@
       padding: 15px;
       margin-bottom: 20px;
     }
-
     h2 {
       font-size: 18px;
       font-family: "Montserrat", sans-serif;
       font-weight: 500;
       margin: 0 0 15px 0;
     }
-
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -54,7 +48,6 @@
       gap: 5px;
       margin-top: 10px;
     }
-
     .week-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -63,11 +56,9 @@
       color: #777;
       margin-bottom: 5px;
     }
-
     .week-day {
       padding: 5px 0;
     }
-
     .day {
       height: 35px;
       display: flex;
@@ -77,21 +68,17 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-
     .day:hover {
       background-color: #e0e0e0;
     }
-
     .day.active {
       background-color: #28a745;
       color: white;
     }
-
     .day.disabled {
       color: #ccc;
       cursor: not-allowed;
     }
-
     .dropdown {
       width: 100%;
       padding: 12px;
@@ -103,7 +90,6 @@
       background-color: #f9f9f9;
       font-size: 14px;
     }
-
     .note {
       font-size: 12px;
       margin-top: 5px;
@@ -111,20 +97,17 @@
       font-weight: 500;
       color: gray;
     }
-
     .toggle {
       position: relative;
       display: inline-block;
       width: 50px;
       height: 24px;
     }
-
     .toggle input {
       opacity: 0;
       width: 0;
       height: 0;
     }
-
     .slider {
       position: absolute;
       cursor: pointer;
@@ -136,7 +119,6 @@
       transition: .4s;
       border-radius: 24px;
     }
-
     .slider:before {
       position: absolute;
       content: "";
@@ -148,15 +130,12 @@
       transition: .4s;
       border-radius: 50%;
     }
-
     input:checked + .slider {
       background-color: #28a745;
     }
-
     input:checked + .slider:before {
       transform: translateX(26px);
     }
-
     textarea {
       width: 100%;
       padding: 10px;
@@ -168,7 +147,6 @@
       font-family: "SourceCodePro", sans-serif;
       box-sizing: border-box;
     }
-
     .btn-agendar {
       background-color: #28a745;
       color: white;
@@ -181,29 +159,24 @@
       margin: 20px auto 0 auto;
       display: block;
     }
-
     .btn-agendar:hover {
       background-color: #218838;
     }
-
     .month-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
     }
-
     .month-title {
       font-weight: 500;
     }
-
     .nav-arrow {
       cursor: pointer;
       color: #28a745;
       font-size: 20px;
       user-select: none;
     }
-
     .agendamento-box {
       background-color: white;
       border-radius: 10px;
@@ -211,8 +184,6 @@
       box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.15);
       margin-bottom: 20px;
     }
-
-    /* Estilo para campo oculto */
     .hidden {
       display: none;
     }
@@ -220,20 +191,17 @@
 </head>
 <body>
   <div class="container">
-    <a href="#" class="btn-login" id="back-btn" style="font-size: 20px; padding-left: 3vh;" onclick="voltarPagina()">&#x276E;</a>
-
+    <a href="#" class="btn-login" id="back-btn" onclick="voltarPagina()">&#x276E;</a>
     <div class="local-card">
       <h2 id="nome-local">Carregando...</h2>
     </div>
-
-    <!-- Importante: mudamos para um <form> com método POST -->
     <form id="coleta-form" action="/agendar-coleta" method="POST">
       <div class="agendamento-box">
         <div class="calendar-section">
           <h2>Quando será sua coleta?</h2>
           <div class="month-nav">
             <span class="nav-arrow" onclick="mudarMes(-1)">&#9664;</span>
-            <span class="month-title" id="mes-ano">Agosto 2025</span>
+            <span class="month-title" id="mes-ano"></span>
             <span class="nav-arrow" onclick="mudarMes(1)">&#9654;</span>
           </div>
           <div class="week-days">
@@ -246,13 +214,11 @@
             <div class="week-day">Sáb</div>
           </div>
           <div class="calendar" id="calendario"></div>
-          <!-- Campo oculto para armazenar a data selecionada -->
           <input type="hidden" id="data" name="data" required>
         </div>
-
         <div class="material-section">
           <h2>Quais materiais serão coletados?</h2>
-          <div class="note" id="material-nota">*Essa empresa só realiza coletas Lixos Eletrônicos</div>
+          <div class="note" id="material-nota"></div>
           <select class="dropdown" id="material-select" name="material" required>
             <option value="">Selecione uma ou mais opções</option>
             <option value="informatica">Informatica</option>
@@ -261,10 +227,9 @@
             <option value="Aparelhos Telefonicos">Aparelhos Telefonicos</option>
           </select>
         </div>
-
         <div class="peso-section">
           <h2>Qual o peso aproximado da sua separação?</h2>
-          <div class="note" id="peso-nota">*Essa empresa só realiza coletas a partir de 10kg</div>
+          <div class="note" id="peso-nota"></div>
           <select class="dropdown" id="peso-select" name="peso" required>
             <option value="">Selecione uma opção</option>
             <option value="ate5">Até 5kg</option>
@@ -273,32 +238,26 @@
             <option value="mais20">Mais de 20kg</option>
           </select>
         </div>
-
         <div class="toggle-container">
-          <div>
-            <h2>Utilizar endereço e contatos do cadastro</h2>
-          </div>
+          <h2>Utilizar endereço e contatos do cadastro</h2>
           <label class="toggle">
             <input type="checkbox" id="usar-cadastro" name="usarCadastro" checked>
             <span class="slider"></span>
           </label>
         </div>
-
         <div class="observacao">
           <h2>Tem alguma observação?</h2>
           <textarea id="observacao" name="observacao" placeholder="Comente sobre seus itens, horários que estará disponível, etc."></textarea>
         </div>
-
-        <!-- Campo oculto para enviar o local selecionado -->
         <input type="hidden" id="local" name="local">
-
         <button type="submit" class="btn-agendar">Agendar Coleta</button>
       </div>
     </form>
   </div>
 
   <script>
-    let pontoSelecionado = localStorage.getItem('pontoTemp') || '';
+    // Recupera ponto selecionado
+    const pontoSelecionado = localStorage.getItem('pontoTemp') || '';
     document.getElementById('nome-local').innerText = pontoSelecionado;
     document.getElementById('local').value = pontoSelecionado;
 
@@ -306,9 +265,13 @@
       window.location.href = '/mapa';
     }
 
-    const hoje = new Date();
-    let mesAtual = hoje.getMonth();
-    let anoAtual = hoje.getFullYear();
+    // Data de hoje com hora zerada
+    const hojeLimpo = new Date();
+    hojeLimpo.setHours(0, 0, 0, 0);
+
+    // Para navegação de meses
+    let mesAtual = hojeLimpo.getMonth();
+    let anoAtual = hojeLimpo.getFullYear();
     let diaSelecionado = null;
 
     function atualizarCalendario() {
@@ -316,111 +279,105 @@
       calendario.innerHTML = '';
 
       const mesAnoElement = document.getElementById('mes-ano');
-      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
       mesAnoElement.innerText = `${meses[mesAtual]} ${anoAtual}`;
 
       const primeiroDia = new Date(anoAtual, mesAtual, 1);
       const ultimoDia = new Date(anoAtual, mesAtual + 1, 0);
 
+      // Espaços vazios antes do primeiro dia
       for (let i = 0; i < primeiroDia.getDay(); i++) {
-        const diaVazio = document.createElement('div');
-        diaVazio.className = 'day disabled';
-        calendario.appendChild(diaVazio);
+        const vazio = document.createElement('div');
+        vazio.className = 'day disabled';
+        calendario.appendChild(vazio);
       }
 
-      for (let i = 1; i <= ultimoDia.getDate(); i++) {
+      // Dias do mês
+      for (let d = 1; d <= ultimoDia.getDate(); d++) {
         const dia = document.createElement('div');
-        const hojeLimpo = new Date();
         dia.className = 'day';
-        dia.innerText = i;
+        dia.innerText = d;
 
-        const dataAtual = new Date(anoAtual, mesAtual, i);
+        const dataAtual = new Date(anoAtual, mesAtual, d);
+        // desabilita apenas se for ANTERIOR a hoje
         if (dataAtual < hojeLimpo) {
-        dia.className = 'day disabled';
-        } else  {
-          dia.onclick = function () {
-            const diasAtivos = document.querySelectorAll('.day.active');
-            diasAtivos.forEach(d => d.classList.remove('active'));
-
+          dia.className = 'day disabled';
+        } else {
+          dia.onclick = () => {
+            document.querySelectorAll('.day.active')
+              .forEach(el => el.classList.remove('active'));
             dia.classList.add('active');
-            diaSelecionado = new Date(anoAtual, mesAtual, i);
-            
-            // Formatando a data para o formato YYYY-MM-DD para envio ao servidor
-            const mes = (mesAtual + 1).toString().padStart(2, '0');
-            const diaStr = i.toString().padStart(2, '0');
-            document.getElementById('data').value = `${anoAtual}-${mes}-${diaStr}`;
+            diaSelecionado = dataAtual;
+
+            // preenche hidden com YYYY-MM-DD
+            const mm = String(mesAtual + 1).padStart(2, '0');
+            const dd = String(d).padStart(2, '0');
+            document.getElementById('data').value = `${anoAtual}-${mm}-${dd}`;
           };
         }
-
         calendario.appendChild(dia);
       }
     }
 
     function mudarMes(delta) {
       mesAtual += delta;
-      if (mesAtual > 11) {
-        mesAtual = 0;
-        anoAtual++;
-      } else if (mesAtual < 0) {
+      if (mesAtual < 0) {
         mesAtual = 11;
         anoAtual--;
+      } else if (mesAtual > 11) {
+        mesAtual = 0;
+        anoAtual++;
       }
       atualizarCalendario();
     }
 
-    window.onload = function () {
-      const pontoTemp = localStorage.getItem('pontoTemp');
-      if (!pontoTemp) {
-        window.location.href = '/mapa';
-        return;
+    window.onload = () => {
+      if (!pontoSelecionado) {
+        return voltarPagina();
       }
 
-      document.getElementById('nome-local').innerText = pontoTemp;
-      document.getElementById('local').value = pontoTemp;
-
-      if (pontoTemp === 'Tech-Recycle') {
+      // Ajusta notas específicas
+      if (pontoSelecionado === 'Tech-Recycle') {
         document.getElementById('material-nota').innerText = '*Essa empresa só realiza coletas de Lixos Eletrônicos';
         document.getElementById('peso-nota').innerText = '*Essa empresa só realiza coletas a partir de 10kg';
+      } else {
+        document.getElementById('material-nota').innerText = '*Selecione o tipo de material';
+        document.getElementById('peso-nota').innerText = '*Selecione o peso aproximado';
       }
 
       atualizarCalendario();
-      
-      // Adicionamos validação no formulário antes de enviar
-      document.getElementById('coleta-form').addEventListener('submit', function(event) {
-        if (!document.getElementById('data').value) {
-          event.preventDefault();
-          alert('Por favor, selecione uma data para a coleta');
-          return false;
-        }
-        
-        if (!document.getElementById('material-select').value) {
-          event.preventDefault();
-          alert('Por favor, selecione o tipo de material');
-          return false;
-        }
-        
-        if (!document.getElementById('peso-select').value) {
-          event.preventDefault();
-          alert('Por favor, selecione o peso aproximado');
-          return false;
-        }
-        
-        const dataFormatada = diaSelecionado.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const horario = '08:00';
 
-        const agendamento = {
-          data: dataFormatada,
-          horario,
-          material: document.getElementById('material-select').value,
-          peso: document.getElementById('peso-select').value,
-          usarCadastro: document.getElementById('usar-cadastro').checked,
-          observacao: document.getElementById('observacao').value,
-          local: pontoSelecionado
-        };
+      // Validação e armazenamento no submit
+      document.getElementById('coleta-form')
+        .addEventListener('submit', event => {
+          if (!document.getElementById('data').value) {
+            event.preventDefault();
+            return alert('Por favor, selecione uma data para a coleta');
+          }
+          if (!document.getElementById('material-select').value) {
+            event.preventDefault();
+            return alert('Por favor, selecione o tipo de material');
+          }
+          if (!document.getElementById('peso-select').value) {
+            event.preventDefault();
+            return alert('Por favor, selecione o peso aproximado');
+          }
 
-        localStorage.setItem('agendamento', JSON.stringify(agendamento));
-        localStorage.setItem('agendamentoStatus', 'ativo');
-      });
+          const dataFormatada = diaSelecionado
+            .toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          const agendamento = {
+            data: dataFormatada,
+            horario: '08:00',
+            material: document.getElementById('material-select').value,
+            peso: document.getElementById('peso-select').value,
+            usarCadastro: document.getElementById('usar-cadastro').checked,
+            observacao: document.getElementById('observacao').value,
+            local: pontoSelecionado
+          };
+
+          localStorage.setItem('agendamento', JSON.stringify(agendamento));
+          localStorage.setItem('agendamentoStatus', 'ativo');
+        });
     };
   </script>
 </body>
