@@ -541,12 +541,12 @@ span {
 
 .btn-voltar {
   background-color: transparent;
-  border: 2px solid #28a745;
+  border: 1px solid #28a745;
   color: #28a745;
-  padding: 6px 12px;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-weight: bold;
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
 }
 

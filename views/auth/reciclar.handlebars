@@ -1,3 +1,4 @@
+<a href="#" style="font-size: 20px;" class="btn-login" id="back-btn" onclick="voltarPagina()">&#x276E;</a>
 <div class="residuos-container">
   <h3>Resíduos que você pode separar para coleta:</h3>
 
@@ -74,3 +75,15 @@
     <button onclick="window.history.back()" class="btn-voltar">Voltar</button>
   </div>
 </div>
+
+<script>
+  function voltarPagina() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    const lastPage = document.referrer || '/';
+    window.location.href = lastPage;
+  }
+}
+
+</script>
