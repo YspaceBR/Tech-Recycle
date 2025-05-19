@@ -6,6 +6,11 @@
     <link rel="icon" href="/img/1109.png" type="image/png" />
     <title>Tech Recycle</title>
   </head>
+  <style>
+    .bottom-nav .nav-item.active {
+  color: green;
+}
+  </style>
   <body>
     <div class="app-content">
       <div class="tela-principal">
@@ -145,18 +150,31 @@
       </div>
     </div>
   </body>
-
   <script>
-    document.addEventListener('DOMContentLoaded', function () { const navItems =
-    document.querySelectorAll('.bottom-nav .nav-item'); const pontoButtons =
-    document.querySelectorAll('.button-pontos button'); const currentPath =
-    window.location.pathname; // Ativa a navegação com base na URL
-    navItems.forEach((item) => { if (item.getAttribute('href') === currentPath)
-    { item.classList.add('active'); } item.addEventListener('click', () => {
-    navItems.forEach((nav) => nav.classList.remove('active'));
-    item.classList.add('active'); }); }); // Evento para ativar os botões-pontos
-    manualmente pontoButtons.forEach((btn) => { btn.addEventListener('click', ()
-    => { pontoButtons.forEach((b) => b.classList.remove('active'));
-    btn.classList.add('active'); }); }); });
+    document.addEventListener('DOMContentLoaded', function () {
+      const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+      const pontoButtons = document.querySelectorAll('.button-pontos button');
+      const currentPath = window.location.pathname;
+
+      // Ativa a navegação com base na URL
+      navItems.forEach((item) => {
+        if (item.getAttribute('href') === currentPath) {
+          item.classList.add('active');
+        }
+
+        item.addEventListener('click', () => {
+          navItems.forEach((nav) => nav.classList.remove('active'));
+          item.classList.add('active');
+        });
+      });
+
+      // Evento para ativar os botões-pontos manualmente
+      pontoButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          pontoButtons.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
   </script>
 </html>

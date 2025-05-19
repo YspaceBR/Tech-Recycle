@@ -122,3 +122,12 @@
     Ir para o mapa
   </button>
 </div>
+
+<script>
+  document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(b => b.classList.remove('ativo'));
+      this.classList.add('ativo');
+    });
+  });
+</script>
