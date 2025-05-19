@@ -119,6 +119,8 @@
     .btn-agendar:hover {
       background-color: #218838;
     }
+
+
   </style>
 </head>
 <body>
@@ -132,72 +134,125 @@
     <input type="text" placeholder="Digite seu CEP" />
   </div>
 
-  <div class="card" data-lat="-15.8311" data-lng="-48.0554">
-    <h3>E-Reciclagem - Centro de Material Eletrônico Reciclável</h3>
-    <p>QS 07, Lote 01, Taguatinga Sul - Taguatinga</p>
-    <p class="aberto">Aberto de seg. a sex. das 7h30 às 18h</p>
-    <p>(61) 98467-8637</p>
-  </div>
-
-  <div class="card" data-lat="-15.8252" data-lng="-48.0433">
-    <h3>Coleta Municipal</h3>
-    <p>Trajeto pelo bairro Taguatinga Sul</p>
-    <p class="aberto">Quinta-feira a partir das 18h</p>
-  </div>
-
-  <div class="card" data-lat="-15.8367" data-lng="-48.0383">
-    <h3>PEV's Estação de Metrô Águas Claras</h3>
-    <p>Águas Claras, Brasília - DF</p>
-    <p class="aberto">Aberto de seg. a sex. das 6h às 23h</p>
-  </div>
-
-  <div class="card" data-lat="-15.8272" data-lng="-47.9315">
-    <h3>PEV da Asa Sul</h3>
-    <p>912 Sul, Brasília - DF</p>
-    <p class="aberto">Aberto de seg. a sab. das 7h às 19h</p>
-  </div>
-
-  <div class="card" data-lat="-15.7569" data-lng="-47.8781">
-    <h3>PEV da Asa Norte</h3>
-    <p>911 Norte, Brasília - DF</p>
-    <p class="aberto">Aberto de seg. a sab. das 7h às 19h</p>
-  </div>
-
-  <div class="card" data-lat="-15.7876" data-lng="-47.9318">
-    <h3>PEV do Sudoeste</h3>
-    <p>Próximo ao Bosque do Sudoeste</p>
-    <p class="aberto">Aberto de seg. a sab. das 7h às 19h</p>
-  </div>
-
-  <div class="card" data-lat="-15.8758" data-lng="-48.0510">
-    <h3>URE Samambaia</h3>
-    <p>Unidade de Entulho - Samambaia</p>
-    <p class="aberto">Segunda a sexta, 8h às 17h</p>
+<div class="card" data-lat="-15.8252" data-lng="-48.0433">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">Coleta Municipal</h3>
+      <p style="margin: 4px 0;">Trajeto pelo bairro Taguatinga Sul</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Quinta-feira a partir das 18h</p>
+    </div>
   </div>
 </div>
 
+<div class="card" data-lat="-15.8367" data-lng="-48.0383">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">PEV's Estação de Metrô Águas Claras</h3>
+      <p style="margin: 4px 0;">Águas Claras, Brasília - DF</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Aberto de seg. a sex. das 6h às 23h</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-lat="-15.8272" data-lng="-47.9315">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">PEV da Asa Sul</h3>
+      <p style="margin: 4px 0;">912 Sul, Brasília - DF</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Aberto de seg. a sab. das 7h às 19h</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-lat="-15.7569" data-lng="-47.8781">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">PEV da Asa Norte</h3>
+      <p style="margin: 4px 0;">911 Norte, Brasília - DF</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Aberto de seg. a sab. das 7h às 19h</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-lat="-15.7876" data-lng="-47.9318">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">PEV do Sudoeste</h3>
+      <p style="margin: 4px 0;">Próximo ao Bosque do Sudoeste</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Aberto de seg. a sab. das 7h às 19h</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-lat="-15.8758" data-lng="-48.0510">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">URE Samambaia</h3>
+      <p style="margin: 4px 0;">Unidade de Entulho - Samambaia</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Segunda a sexta, 8h às 17h</p>
+    </div>
+  </div>
+</div>
+
+<!-- Externos fora do container -->
 <div class="card" data-lat="-15.8850" data-lng="-48.0200">
-  <h3>PEV Águas Lindas de Goiás</h3>
-  <p>Centro, Águas Lindas de Goiás</p>
-  <p class="aberto">Aberto de seg. a sex. das 8h às 17h</p>
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">PEV Águas Lindas de Goiás</h3>
+      <p style="margin: 4px 0;">Área de Coleta Municipal</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Funcionamento: Seg a Sex, 8h-18h</p>
+    </div>
+  </div>
 </div>
 
-<div class="card" data-lat="-15.8900" data-lng="-48.0100">
-  <h3>PEV Água Quente</h3>
-  <p>Rua Central, Água Quente</p>
-  <p class="aberto">Aberto de seg. a sex. das 8h às 17h</p>
-</div>
-
-<div class="card" data-lat="-15.8700" data-lng="-48.0000">
-  <h3>PEV Arapoanga</h3>
-  <p>Arapoanga, Planaltina - DF</p>
-  <p class="aberto">Aberto de seg. a sex. das 8h às 17h</p>
-</div>
-
-<div class="card" data-lat="-15.8200" data-lng="-48.0000">
-  <h3>PEV Águas Claras (Jacarandá)</h3>
-  <p>Avenida Jacarandá, Lote 24 - Águas Claras</p>
-  <p class="aberto">Aberto de seg. a sex. das 7h às 18h</p>
+<div class="card" data-lat="-15.8860" data-lng="-48.0800">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#28a745" stroke="#28a745">
+        <path d="M24,4a12,12,0,0,0-2,23.8V42a2,2,0,0,0,4,0V27.8A12,12,0,0,0,24,4Zm0,16a4,4,0,1,1,4-4A4,4,0,0,1,24,20Z"></path>
+      </svg>
+    </div>
+    <div style="flex-grow: 1; text-align: left;">
+      <h3 style="margin: 0; font-size: 1rem;">PEV Novo Gama</h3>
+      <p style="margin: 4px 0;">Unidade de Entulho - Novo Gama</p>
+      <p class="aberto" style="margin: 4px 0; color: green;">Funcionamento: Seg a Sex, 8h-18h</p>
+    </div>
+  </div>
 </div>
 
 <script>
