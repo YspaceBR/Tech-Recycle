@@ -98,71 +98,124 @@
   </div>
 
   <script>
-    const agendamentoStr = localStorage.getItem('agendamento');
-    const card = document.getElementById('info-agendamento');
-    const mensagem = document.getElementById('mensagem-agendamento');
-    const extra = document.getElementById('info-extra');
-
-    if (agendamentoStr) {
-      const dados = JSON.parse(agendamentoStr);
-
-      mensagem.style.display = 'none';
-      card.style.display = 'block';
-
-      // Guarda o id da coleta para futura requisição de cancelamento
-      if (dados.idColeta) {
-        card.dataset.idColeta = dados.idColeta;
+    // Capturar o ID da coleta da URL quando a página carrega
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const idColetaParam = urlParams.get('idColeta');
+      
+      if (idColetaParam) {
+        console.log('ID da coleta encontrado na URL:', idColetaParam);
+        
+        // Recuperar ou criar o objeto de agendamento
+        let agendamentoObj = {};
+        const agendamentoStr = localStorage.getItem('agendamento');
+        
+        if (agendamentoStr) {
+          try {
+            agendamentoObj = JSON.parse(agendamentoStr);
+          } catch (e) {
+            console.error('Erro ao parsear agendamento:', e);
+          }
+        }
+        
+        // Atualizar o objeto com o ID correto da coleta
+        agendamentoObj.idColeta = idColetaParam;
+        
+        // Salvar de volta no localStorage
+        localStorage.setItem('agendamento', JSON.stringify(agendamentoObj));
+        console.log('Agendamento salvo com ID da coleta:', idColetaParam);
       }
-
-      card.innerHTML = `
-        <div><strong>${dados.local}</strong></div>
-        <div class="data-material">${dados.data} - ${dados.material}</div>
-      `;
-
-      extra.innerHTML = `
-        <div class="nota">
-          *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
-        </div>
-        <div class="button-container">
-          <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar coleta</button>
-          <button onclick="reagendar()" class="btn-reagendar">Reagendar</button>
-        </div>
-      `;
+      
+      carregarAgendamento();
+    });
+    
+    function carregarAgendamento() {
+      const agendamentoStr = localStorage.getItem('agendamento');
+      const card = document.getElementById('info-agendamento');
+      const mensagem = document.getElementById('mensagem-agendamento');
+      const extra = document.getElementById('info-extra');
+      
+      console.log('Dados brutos do localStorage:', agendamentoStr);
+      
+      if (agendamentoStr) {
+        try {
+          const dados = JSON.parse(agendamentoStr);
+          console.log('Dados do agendamento:', dados);
+          
+          mensagem.style.display = 'none';
+          card.style.display = 'block';
+          
+          // Verificar e converter o ID da coleta para número
+          if (dados.idColeta) {
+            const idColetaNum = parseInt(dados.idColeta);
+            if (!isNaN(idColetaNum)) {
+              card.dataset.idColeta = idColetaNum;
+              console.log('ID da coleta definido:', card.dataset.idColeta);
+            } else {
+              console.error('ID da coleta inválido:', dados.idColeta);
+            }
+          }
+          
+          card.innerHTML = `
+            <div><strong>${dados.local || 'Local não especificado'}</strong></div>
+            <div class="data-material">${dados.data || 'Data não especificada'} - ${dados.material || 'Material não especificado'}</div>
+          `;
+          
+          extra.innerHTML = `
+            <div class="nota">
+              *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
+            </div>
+            <div class="button-container">
+              <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar coleta</button>
+              <button onclick="reagendar()" class="btn-reagendar">Reagendar</button>
+            </div>
+          `;
+        } catch (e) {
+          console.error('Erro ao processar dados do agendamento:', e);
+        }
+      }
     }
-
-    function concluirAgendamento() {
-      localStorage.setItem('agendamentoStatus', 'feito');
-      const lastPage = document.referrer || '/';
-      window.location.href = lastPage;
-    }
-
+    
     async function cancelarAgendamento() {
-      const idColeta = card.dataset.idColeta;
-      if (!idColeta) {
-        return alert('ID da coleta não encontrado.');
+      const card = document.getElementById('info-agendamento');
+      const mensagem = document.getElementById('mensagem-agendamento');
+      const extra = document.getElementById('info-extra');
+      
+      let idColeta = card.dataset.idColeta;
+      idColeta = parseInt(idColeta);
+      
+      console.log('Tentando cancelar coleta com ID:', idColeta);
+      
+      if (!idColeta || isNaN(idColeta)) {
+        console.error('ID da coleta inválido:', idColeta);
+        return alert('ID da coleta inválido ou não encontrado.');
       }
-
+      
       try {
         const res = await fetch('/cancelar-coleta', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ idColeta })
         });
+        
+        console.log('Status da resposta:', res.status);
         const json = await res.json();
+        console.log('Resposta completa:', json);
+        
         if (json.sucesso) {
-          // Limpa o storage e atualiza UI
           localStorage.removeItem('agendamento');
           localStorage.setItem('agendamentoStatus', 'cancelado');
-
+          
           mensagem.style.display = 'block';
+          mensagem.textContent = 'Nenhuma coleta agendada';
           card.style.display = 'none';
-          extra.innerHTML = `<div class="nota">Agendamento cancelado.</div>`;
+          extra.innerHTML = `<div class="nota">Agendamento cancelado com sucesso.</div>`;
         } else {
           alert('Não foi possível cancelar: ' + json.mensagem);
         }
       } catch (err) {
-        console.error(err);
-        alert('Erro na requisição de cancelamento.');
+        console.error('Erro detalhado:', err);
+        alert('Erro na requisição de cancelamento. Verifique o console para mais detalhes.');
       }
     }
 
@@ -175,5 +228,7 @@
       window.location.href = lastPage;
     }
   </script>
+</body>
+</html>
 </body>
 </html>

@@ -5,6 +5,7 @@
   <title>Agendar Coleta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    /* Seu CSS original */
     .container {
       max-width: 600px;
       margin: 0 auto;
@@ -144,7 +145,7 @@
       resize: vertical;
       min-height: 80px;
       margin-top: 10px;
-      font-family: "SourceCodePro", sans-serif;
+      font-family: "SourceCodePro", monospace;
       box-sizing: border-box;
     }
     .btn-agendar {
@@ -256,129 +257,112 @@
   </div>
 
   <script>
-    // Recupera ponto selecionado
-    const pontoSelecionado = localStorage.getItem('pontoTemp') || '';
-    document.getElementById('nome-local').innerText = pontoSelecionado;
-    document.getElementById('local').value = pontoSelecionado;
+  // ====== Para TESTE: definir pontoTemp se não existir ======
+  if (!localStorage.getItem('pontoTemp')) {
+    localStorage.setItem('pontoTemp', 'Tech-Recycle');
+  }
 
-    function voltarPagina() {
-      window.location.href = '/mapa';
+  // Recupera ponto selecionado
+  const pontoSelecionado = localStorage.getItem('pontoTemp') || '';
+  document.getElementById('nome-local').innerText = pontoSelecionado;
+  document.getElementById('local').value = pontoSelecionado;
+
+  function voltarPagina() {
+    window.location.href = '/mapa';
+  }
+
+  // Data de hoje com hora zerada
+  const hojeLimpo = new Date();
+  hojeLimpo.setHours(0, 0, 0, 0);
+
+  // Navegação de meses
+  let mesAtual = hojeLimpo.getMonth();
+  let anoAtual = hojeLimpo.getFullYear();
+  let diaSelecionado = null;
+
+  function atualizarCalendario() {
+    const calendario = document.getElementById('calendario');
+    calendario.innerHTML = '';
+
+    const mesAnoElement = document.getElementById('mes-ano');
+    const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    mesAnoElement.innerText = `${meses[mesAtual]} ${anoAtual}`;
+
+    const primeiroDia = new Date(anoAtual, mesAtual, 1);
+    const ultimoDia = new Date(anoAtual, mesAtual + 1, 0);
+
+    // Espaços vazios antes do primeiro dia
+    for (let i = 0; i < primeiroDia.getDay(); i++) {
+      const vazio = document.createElement('div');
+      vazio.className = 'day disabled';
+      calendario.appendChild(vazio);
     }
 
-    // Data de hoje com hora zerada
-    const hojeLimpo = new Date();
-    hojeLimpo.setHours(0, 0, 0, 0);
+    // Dias do mês
+    for (let d = 1; d <= ultimoDia.getDate(); d++) {
+      const dia = document.createElement('div');
+      dia.className = 'day';
+      dia.innerText = d;
 
-    // Para navegação de meses
-    let mesAtual = hojeLimpo.getMonth();
-    let anoAtual = hojeLimpo.getFullYear();
-    let diaSelecionado = null;
-
-    function atualizarCalendario() {
-      const calendario = document.getElementById('calendario');
-      calendario.innerHTML = '';
-
-      const mesAnoElement = document.getElementById('mes-ano');
-      const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-      mesAnoElement.innerText = `${meses[mesAtual]} ${anoAtual}`;
-
-      const primeiroDia = new Date(anoAtual, mesAtual, 1);
-      const ultimoDia = new Date(anoAtual, mesAtual + 1, 0);
-
-      // Espaços vazios antes do primeiro dia
-      for (let i = 0; i < primeiroDia.getDay(); i++) {
-        const vazio = document.createElement('div');
-        vazio.className = 'day disabled';
-        calendario.appendChild(vazio);
-      }
-
-      // Dias do mês
-      for (let d = 1; d <= ultimoDia.getDate(); d++) {
-        const dia = document.createElement('div');
-        dia.className = 'day';
-        dia.innerText = d;
-
-        const dataAtual = new Date(anoAtual, mesAtual, d);
-        // desabilita apenas se for ANTERIOR a hoje
-        if (dataAtual < hojeLimpo) {
-          dia.className = 'day disabled';
-        } else {
-          dia.onclick = () => {
-            document.querySelectorAll('.day.active')
-              .forEach(el => el.classList.remove('active'));
-            dia.classList.add('active');
-            diaSelecionado = dataAtual;
-
-            // preenche hidden com YYYY-MM-DD
-            const mm = String(mesAtual + 1).padStart(2, '0');
-            const dd = String(d).padStart(2, '0');
-            document.getElementById('data').value = `${anoAtual}-${mm}-${dd}`;
-          };
-        }
-        calendario.appendChild(dia);
-      }
-    }
-
-    function mudarMes(delta) {
-      mesAtual += delta;
-      if (mesAtual < 0) {
-        mesAtual = 11;
-        anoAtual--;
-      } else if (mesAtual > 11) {
-        mesAtual = 0;
-        anoAtual++;
-      }
-      atualizarCalendario();
-    }
-
-    window.onload = () => {
-      if (!pontoSelecionado) {
-        return voltarPagina();
-      }
-
-      // Ajusta notas específicas
-      if (pontoSelecionado === 'Tech-Recycle') {
-        document.getElementById('material-nota').innerText = '*Essa empresa só realiza coletas de Lixos Eletrônicos';
-        document.getElementById('peso-nota').innerText = '*Essa empresa só realiza coletas a partir de 10kg';
+      const dataAtual = new Date(anoAtual, mesAtual, d);
+      if (dataAtual < hojeLimpo) {
+        dia.classList.add('disabled');
       } else {
-        document.getElementById('material-nota').innerText = '*Selecione o tipo de material';
-        document.getElementById('peso-nota').innerText = '*Selecione o peso aproximado';
+        dia.onclick = () => {
+          document.querySelectorAll('.day.active').forEach(el => el.classList.remove('active'));
+          dia.classList.add('active');
+          diaSelecionado = dataAtual;
+
+          const mm = String(mesAtual + 1).padStart(2, '0');
+          const dd = String(d).padStart(2, '0');
+          document.getElementById('data').value = `${anoAtual}-${mm}-${dd}`;
+        };
       }
+      calendario.appendChild(dia);
+    }
+  }
 
-      atualizarCalendario();
+  function mudarMes(direcao) {
+    mesAtual += direcao;
+    if (mesAtual < 0) {
+      mesAtual = 11;
+      anoAtual--;
+    } else if (mesAtual > 11) {
+      mesAtual = 0;
+      anoAtual++;
+    }
+    atualizarCalendario();
+  }
 
-      // Validação e armazenamento no submit
-      document.getElementById('coleta-form')
-        .addEventListener('submit', event => {
-          if (!document.getElementById('data').value) {
-            event.preventDefault();
-            return alert('Por favor, selecione uma data para a coleta');
-          }
-          if (!document.getElementById('material-select').value) {
-            event.preventDefault();
-            return alert('Por favor, selecione o tipo de material');
-          }
-          if (!document.getElementById('peso-select').value) {
-            event.preventDefault();
-            return alert('Por favor, selecione o peso aproximado');
-          }
+  window.onload = () => {
+    if (!pontoSelecionado) {
+      voltarPagina();
+      return;
+    }
+    atualizarCalendario();
 
-          const dataFormatada = diaSelecionado
-            .toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-          const agendamento = {
-            data: dataFormatada,
-            horario: '08:00',
-            material: document.getElementById('material-select').value,
-            peso: document.getElementById('peso-select').value,
-            usarCadastro: document.getElementById('usar-cadastro').checked,
-            observacao: document.getElementById('observacao').value,
-            local: pontoSelecionado
-          };
+    document.getElementById('coleta-form').addEventListener('submit', function(event) {
 
-          localStorage.setItem('agendamento', JSON.stringify(agendamento));
-          localStorage.setItem('agendamentoStatus', 'ativo');
-        });
-    };
-  </script>
+      const dataValue = document.getElementById('data').value;
+      const materialValue = document.getElementById('material-select').value;
+      const localValue = document.getElementById('local').value;
+      const pesoValue = document.getElementById('peso-select').value;
+      const usarCadastroValue = document.getElementById('usar-cadastro').checked;
+      const observacaoValue = document.getElementById('observacao').value;
+
+      const agendamento = {
+        data: dataValue,
+        material: materialValue,
+        local: localValue,
+        peso: pesoValue,
+        usarCadastro: usarCadastroValue,
+        observacao: observacaoValue
+      };
+
+      localStorage.setItem('agendamento', JSON.stringify(agendamento));
+      console.log('Dados de agendamento salvos:', agendamento);
+    });
+  };
+</script>
 </body>
 </html>

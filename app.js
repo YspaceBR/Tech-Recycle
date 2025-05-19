@@ -26,7 +26,10 @@ app.use(
   })
 );
 
-// Middleware para parsing de corpo de requisição
+// ✅ Middleware necessário para receber JSON via fetch
+app.use(express.json());
+
+// Middleware para parsing de formulários (POST HTML)
 app.use(express.urlencoded({ extended: true }));
 
 // Configuração do Handlebars
