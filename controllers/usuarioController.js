@@ -59,6 +59,10 @@ exports.getAgenda = (req, res) => {
   res.render("auth/agenda", { layout: "auth", navClass: "nav-agenda" });
 };
 
+exports.getBusca = (req, res) => {
+  res.render("auth/busca", { layout: "auth", navClass: "nav-busca" });
+};
+
 exports.getFormulario = (req, res) => {
   res.render("auth/formulario", { layout: "auth", navClass: "nav-formulario" });
 };

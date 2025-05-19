@@ -16,6 +16,7 @@ router.get("/dados", usuarioController.getDados);
 router.get("/mapa", usuarioController.getMapa);
 router.get("/agenda", usuarioController.getAgenda);
 router.get("/formulario", usuarioController.getFormulario);
+router.get("/busca", usuarioController.getBusca);
 
 // Rota para agendamento de coleta
 router.post("/agendar-coleta", coletaController.agendarColeta);
