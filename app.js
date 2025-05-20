@@ -26,7 +26,7 @@ app.use(
   })
 );
 
-// ✅ Middleware necessário para receber JSON via fetch
+// Middleware necessário para receber JSON via fetch
 app.use(express.json());
 
 // Middleware para parsing de formulários (POST HTML)

@@ -69,11 +69,83 @@
     .btn-reagendar:hover {
       color: #28a745;
       background-color: white;
-    } 
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .modal-header {
+      margin-bottom: 20px;
+    }
+    .modal-footer {
+      margin-top: 20px;
+      text-align: right;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-success:hover {
+      background-color: #218838;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .alert-success {
+      background-color: #d5f4e6;
+      color: #27ae60;
+    }
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #c0392b;
+    }
   </style>
 </head>
 <body>
-  <a href="#"  style="font-size: 20px;" class="btn-login" id="back-btn" onclick="voltarPagina()">&#x276E;</a>
+  <a href="#" style="font-size: 20px;" class="btn-login" id="back-btn" onclick="voltarPagina()">&#x276E;</a>
 
   <!-- Mensagem que fica acima do card -->
   <h3 id="mensagem-agendamento" style="font-size: 16px;font-weight: 600;margin-left: 10px; margin-top:2vh">Nenhuma coleta agendada</h3>
@@ -92,352 +164,347 @@
     </button>
   </div>
 
+  <!-- Modal de Reagendamento -->
+  <div id="modal-reagendamento" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close" onclick="fecharModalReagendamento()">&times;</span>
+        <h2>Reagendar Coleta</h2>
+      </div>
+      <div id="modal-alert"></div>
+      <div class="form-group">
+        <label for="nova-data">Selecione a nova data:</label>
+        <input type="date" id="nova-data" class="form-control" min="">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-success" onclick="confirmarReagendamento()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Capturar o ID da coleta da URL quando a página carrega
-    document.addEventListener('DOMContentLoaded', function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const idColetaParam = urlParams.get('idColeta');
-      
-      if (idColetaParam) {
-        console.log('ID da coleta encontrado na URL:', idColetaParam);
+    function logDebug(msg, obj) {
+      if (window.console && console.log) {
+        console.log(msg, obj || '');
+      }
+    }
+
+    // Função para buscar agendamento do servidor
+    async function buscarAgendamentoServidor() {
+      try {
+        const response = await fetch('/buscar-agendamento', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
         
-        // Recuperar ou criar o objeto de agendamento
-        let agendamentoObj = {};
+        if (data.sucesso && data.agendamento) {
+          exibirAgendamento(data.agendamento);
+        } else {
+          // Se não encontrou no servidor, verificar no localStorage
+          verificarAgendamentoLocal();
+        }
+      } catch (error) {
+        console.error('Erro ao buscar agendamento:', error);
+        // Em caso de erro, verificar no localStorage
+        verificarAgendamentoLocal();
+      }
+    }
+
+    // Função para verificar agendamento no localStorage
+    function verificarAgendamentoLocal() {
+      try {
         const agendamentoStr = localStorage.getItem('agendamento');
-        
         if (agendamentoStr) {
-          try {
-            agendamentoObj = JSON.parse(agendamentoStr);
-          } catch (e) {
-            console.error('Erro ao parsear agendamento:', e);
+          const agendamento = JSON.parse(agendamentoStr);
+          if (agendamento && (agendamento.local || agendamento.material)) {
+            exibirAgendamento(agendamento);
+            return;
           }
         }
-        
-        // Atualizar o objeto com o ID correto da coleta
-        agendamentoObj.idColeta = idColetaParam;
-        
-        // Salvar de volta no localStorage
-        localStorage.setItem('agendamento', JSON.stringify(agendamentoObj));
-        console.log('Agendamento salvo com ID da coleta:', idColetaParam);
+        // Se não encontrou no localStorage ou dados incompletos
+        exibirNenhumAgendamento();
+      } catch (e) {
+        console.error('Erro ao verificar agendamento local:', e);
+        exibirNenhumAgendamento();
       }
-      
-      carregarAgendamento();
-    });
-    
-   function carregarAgendamento() {
-  const agendamentoStr = localStorage.getItem('agendamento');
-  const card = document.getElementById('info-agendamento');
-  const mensagem = document.getElementById('mensagem-agendamento');
-  const extra = document.getElementById('info-extra');
-  
-  console.log('Dados brutos do localStorage:', agendamentoStr);
-  
-  if (agendamentoStr) {
-    try {
-      const dados = JSON.parse(agendamentoStr);
-      console.log('Dados do agendamento:', dados);
+    }
 
-      // Verificação melhorada para data obrigatória
-      if (!dados.data || dados.data === '' || dados.data === 'Data não especificada') {
-        // Mostrar alerta e redirecionar para o formulário
-        alert('⚠️ ATENÇÃO: Você ainda não informou a data da coleta!\n\n' +
-              'Para completar seu agendamento, é necessário selecionar uma data.\n' +
-              'Você será redirecionado para o formulário.');
-        
-        // Limpar dados incompletos
-        localStorage.removeItem('agendamento');
-        
-        // Redirecionar para o formulário após um breve delay
-        setTimeout(() => {
-          window.location.href = '/formulario';
-        }, 2000);
-        
-        // Mostrar mensagem de agendamento incompleto
-        mensagem.style.display = 'block';
-        mensagem.textContent = 'Agendamento incompleto - redirecionando...';
-        card.style.display = 'none';
-        extra.innerHTML = '';
-        return;
-      }
+    // Função para exibir o agendamento
+    function exibirAgendamento(agendamento) {
+      const card = document.getElementById('info-agendamento');
+      const mensagem = document.getElementById('mensagem-agendamento');
+      const extra = document.getElementById('info-extra');
 
-      // Verificar se a data está no formato correto
-      if (!validarFormatoData(dados.data)) {
-        alert('⚠️ ERRO: Data em formato inválido!\n\n' +
-              'Por favor, selecione uma data válida no calendário.');
-        
-        localStorage.removeItem('agendamento');
-        setTimeout(() => {
-          window.location.href = '/formulario';
-        }, 2000);
-        return;
-      }
-      
-      // Continuar com o processamento normal se a data estiver presente e válida
+      // Esconder mensagem e mostrar card
       mensagem.style.display = 'none';
       card.style.display = 'block';
-      
-      // Verificar e converter o ID da coleta para número
-      if (dados.idColeta) {
-        const idColetaNum = parseInt(dados.idColeta);
-        if (!isNaN(idColetaNum)) {
-          card.dataset.idColeta = idColetaNum;
-          console.log('ID da coleta definido:', card.dataset.idColeta);
-        } else {
-          console.error('ID da coleta inválido:', dados.idColeta);
-        }
+
+      // Definir ID da coleta no card
+      if (agendamento.idColeta) {
+        card.dataset.idColeta = agendamento.idColeta;
       }
-      
-      // Formatar a data para exibição
-      const dataFormatada = formatarDataExibicao(dados.data);
-      
+
+      // Dados seguros
+      const local = escapeHTML(agendamento.local || 'Local não especificado');
+      const material = escapeHTML(agendamento.material || 'Material não especificado');
+      const dataFormatada = agendamento.dataExibicao || formatarDataExibicao(agendamento.data);
+      const peso = agendamento.peso ? ` (${agendamento.peso})` : '';
+
+      // Preencher o card
       card.innerHTML = `
-        <div><strong>${dados.local || 'Local não especificado'}</strong></div>
-        <div class="data-material">${dataFormatada} - ${dados.material || 'Material não especificado'}</div>
+        <div><strong>${local}</strong></div>
+        <div class="data-material">${dataFormatada} - ${material}${peso}</div>
       `;
-      
+
+      // Preencher elementos extras
       extra.innerHTML = `
         <div class="nota">
           *Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.
         </div>
         <div class="button-container">
           <button onclick="cancelarAgendamento()" class="btn-cancelar">Cancelar coleta</button>
-          <button onclick="reagendar()" class="btn-reagendar">Reagendar</button>
+          <button onclick="abrirModalReagendamento()" class="btn-reagendar">Reagendar</button>
         </div>
       `;
-    } catch (e) {
-      console.error('Erro ao processar dados do agendamento:', e);
-      alert('Erro ao carregar agendamento. Os dados podem estar corrompidos.');
-      localStorage.removeItem('agendamento');
-    }
-  } else {
-    // Não há agendamento salvo
-    mensagem.style.display = 'block';
-    mensagem.textContent = 'Nenhuma coleta agendada';
-    card.style.display = 'none';
-    extra.innerHTML = '';
-  }
-}
 
-// Função para validar o formato da data
-function validarFormatoData(data) {
-  if (!data) return false;
-  
-  // Verificar se está no formato DD/MM/AAAA ou AAAA-MM-DD
-  const formatoBR = /^\d{2}\/\d{2}\/\d{4}$/;
-  const formatoISO = /^\d{4}-\d{2}-\d{2}$/;
-  
-  if (formatoBR.test(data)) {
-    // Verificar se é uma data válida
-    const [dia, mes, ano] = data.split('/').map(Number);
-    const dataObj = new Date(ano, mes - 1, dia);
-    return dataObj.getDate() === dia && 
-           dataObj.getMonth() === mes - 1 && 
-           dataObj.getFullYear() === ano;
-  }
-  
-  if (formatoISO.test(data)) {
-    // Verificar se é uma data válida
-    const dataObj = new Date(data);
-    return !isNaN(dataObj.getTime());
-  }
-  
-  return false;
-}
-
-// Função para formatar data para exibição
-function formatarDataExibicao(data) {
-  if (!data) return 'Data não especificada';
-  
-  // Se estiver no formato ISO (AAAA-MM-DD), converter para DD/MM/AAAA
-  if (data.includes('-') && data.length === 10) {
-    const [ano, mes, dia] = data.split('-');
-    return `${dia}/${mes}/${ano}`;
-  }
-  
-  // Se já estiver no formato brasileiro, retornar como está
-  return data;
-}
-
-// Função melhorada para salvar agendamento com validação de data
-function salvarAgendamento(dados) {
-  // Validar se a data foi fornecida
-  if (!dados.data) {
-    alert('⚠️ ERRO: É obrigatório selecionar uma data para a coleta!');
-    return false;
-  }
-  
-  // Validar formato da data
-  if (!validarFormatoData(dados.data)) {
-    alert('⚠️ ERRO: Data em formato inválido! Use o calendário para selecionar uma data válida.');
-    return false;
-  }
-  
-  // Verificar se a data não é no passado
-  const hoje = new Date();
-  const dataColeta = new Date(dados.data);
-  
-  // Resetar as horas para comparar apenas as datas
-  hoje.setHours(0, 0, 0, 0);
-  dataColeta.setHours(0, 0, 0, 0);
-  
-  if (dataColeta < hoje) {
-    alert('⚠️ ERRO: Não é possível agendar coleta para uma data no passado!');
-    return false;
-  }
-  
-  // Converter data para formato padrão se necessário
-  if (dados.data.includes('-')) {
-    // Está no formato ISO, converter para DD/MM/AAAA para exibição
-    const [ano, mes, dia] = dados.data.split('-');
-    dados.dataExibicao = `${dia}/${mes}/${ano}`;
-  } else {
-    dados.dataExibicao = dados.data;
-  }
-  
-  // Salvar no localStorage
-  try {
-    localStorage.setItem('agendamento', JSON.stringify(dados));
-    console.log('Agendamento salvo com sucesso:', dados);
-    return true;
-  } catch (error) {
-    console.error('Erro ao salvar agendamento:', error);
-    alert('Erro ao salvar agendamento. Tente novamente.');
-    return false;
-  }
-}
-
-// Função para configurar input de data no calendário
-function configurarCalendario() {
-  const inputData = document.getElementById('data-coleta');
-  if (!inputData) return;
-  
-  // Definir data mínima como hoje
-  const hoje = new Date();
-  const dataMinima = hoje.toISOString().split('T')[0];
-  inputData.setAttribute('min', dataMinima);
-  
-  // Adicionar listener para validação em tempo real
-  inputData.addEventListener('change', function() {
-    const dataSelecionada = this.value;
-    
-    if (!dataSelecionada) {
-      this.setCustomValidity('Por favor, selecione uma data para a coleta.');
-      return;
-    }
-    
-    const dataColeta = new Date(dataSelecionada);
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    
-    if (dataColeta < hoje) {
-      this.setCustomValidity('Não é possível agendar para uma data no passado.');
-      alert('⚠️ ERRO: Não é possível agendar coleta para uma data no passado!');
-      this.value = '';
-      return;
-    }
-    
-    // Verificar se é fim de semana (opcional)
-    const diaSemana = dataColeta.getDay();
-    if (diaSemana === 0 || diaSemana === 6) {
-      const confirmar = confirm('⚠️ ATENÇÃO: Você selecionou um fim de semana.\n\n' +
-                               'Deseja continuar? (A coleta pode não estar disponível aos fins de semana)');
-      if (!confirmar) {
-        this.value = '';
-        return;
+      // Salvar os dados do agendamento no localStorage (garante a consistência)
+      try {
+        localStorage.setItem('agendamento', JSON.stringify(agendamento));
+      } catch (e) {
+        console.error('Erro ao salvar agendamento no localStorage:', e);
       }
     }
-    
-    this.setCustomValidity('');
-    console.log('Data selecionada:', dataSelecionada);
-  });
-  
-  // Adicionar validação visual
-  inputData.addEventListener('invalid', function() {
-    this.style.borderColor = '#e74c3c';
-  });
-  
-  inputData.addEventListener('input', function() {
-    this.style.borderColor = '';
-  });
-}
 
-async function cancelarAgendamento() {
-  const card = document.getElementById('info-agendamento');
-  const mensagem = document.getElementById('mensagem-agendamento');
-  const extra = document.getElementById('info-extra');
-  
-  let idColeta = card.dataset.idColeta;
-  idColeta = parseInt(idColeta);
-  
-  console.log('Tentando cancelar coleta com ID:', idColeta);
-  
-  if (!idColeta || isNaN(idColeta)) {
-    console.error('ID da coleta inválido:', idColeta);
-    return alert('ID da coleta inválido ou não encontrado.');
-  }
-  
-  // Confirmar cancelamento
-  const confirmar = confirm('⚠️ CONFIRMAÇÃO\n\nTem certeza que deseja cancelar esta coleta?\n\nEsta ação não pode ser desfeita.');
-  if (!confirmar) return;
-  
-  try {
-    const res = await fetch('/cancelar-coleta', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idColeta })
-    });
-    
-    console.log('Status da resposta:', res.status);
-    const json = await res.json();
-    console.log('Resposta completa:', json);
-    
-    if (json.sucesso) {
-      localStorage.removeItem('agendamento');
-      localStorage.setItem('agendamentoStatus', 'cancelado');
-      
-      mensagem.style.display = 'block';
+    // Função para exibir quando não há agendamentos
+    function exibirNenhumAgendamento() {
+      const card = document.getElementById('info-agendamento');
+      const mensagem = document.getElementById('mensagem-agendamento');
+      const extra = document.getElementById('info-extra');
+
       mensagem.textContent = 'Nenhuma coleta agendada';
+      mensagem.style.display = 'block';
       card.style.display = 'none';
-      extra.innerHTML = `
-        <div class="nota" style="color: #27ae60; background-color: #d5f4e6; padding: 10px; border-radius: 5px;">
-          ✅ Agendamento cancelado com sucesso.
-        </div>
-      `;
-      
-      // Mostrar opção para novo agendamento após alguns segundos
-      setTimeout(() => {
-        extra.innerHTML += `
-          <div class="button-container" style="margin-top: 15px;">
-            <button onclick="window.location.href='/formulario'" class="btn-reagendar">
-              Fazer novo agendamento
-            </button>
-          </div>
-        `;
-      }, 2000);
-      
-    } else {
-      alert('❌ Não foi possível cancelar: ' + (json.mensagem || 'Erro desconhecido'));
+      extra.innerHTML = '';
     }
-  } catch (err) {
-    console.error('Erro detalhado:', err);
-    alert('❌ Erro na requisição de cancelamento. Verifique sua conexão e tente novamente.');
-  }
-}
 
-function reagendar() {
-  window.location.href = '/formulario';
-}
+    // Função para formatar data para exibição
+    function formatarDataExibicao(data) {
+      if (!data) return 'Data não especificada';
+      
+      if (data.includes('-')) {
+        const [ano, mes, dia] = data.split('-');
+        return `${dia}/${mes}/${ano}`;
+      }
+      
+      if (data.includes('/')) {
+        return data; // Já está no formato brasileiro
+      }
+      
+      // Tentar converter se for um objeto Date
+      try {
+        const date = new Date(data);
+        return date.toLocaleDateString('pt-BR');
+      } catch (e) {
+        return data;
+      }
+    }
 
-function voltarPagina() {
-  const lastPage = document.referrer || '/';
-  window.location.href = lastPage;
-}
+    // Função para cancelar agendamento
+    function cancelarAgendamento() {
+      const card = document.getElementById('info-agendamento');
+      const extra = document.getElementById('info-extra');
+      const mensagem = document.getElementById('mensagem-agendamento');
 
-// Inicializar quando a página carregar
-document.addEventListener('DOMContentLoaded', function() {
-  carregarAgendamento();
-  configurarCalendario();
-});
+      const idColeta = parseInt(card.dataset.idColeta);
+      if (!idColeta || isNaN(idColeta)) {
+        alert('ID da coleta inválido.');
+        return;
+      }
+
+      if (!confirm('Tem certeza que deseja cancelar esta coleta?')) {
+        return;
+      }
+
+      // Mostrar loading
+      const btnCancelar = document.querySelector('.btn-cancelar');
+      const textoOriginal = btnCancelar.textContent;
+      btnCancelar.textContent = 'Cancelando...';
+      btnCancelar.disabled = true;
+
+      fetch('/cancelar-coleta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idColeta })
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.sucesso) {
+            // Limpar localStorage se existir
+            localStorage.removeItem('agendamento');
+            
+            // Mostrar sucesso
+            mensagem.textContent = 'Nenhuma coleta agendada';
+            mensagem.style.display = 'block';
+            card.style.display = 'none';
+            extra.innerHTML = `
+              <div class="nota" style="color: #27ae60; background-color: #d5f4e6; padding: 10px; border-radius: 5px;">
+                ✅ Agendamento cancelado com sucesso.
+              </div>
+              <div class="button-container" style="margin-top: 15px;">
+                <button onclick="window.location.href='/formulario'" class="btn-reagendar">Fazer novo agendamento</button>
+              </div>
+            `;
+          } else {
+            alert('Erro ao cancelar: ' + (json.mensagem || 'Erro desconhecido'));
+            // Restaurar botão
+            btnCancelar.textContent = textoOriginal;
+            btnCancelar.disabled = false;
+          }
+        })
+        .catch(err => {
+          console.error('Erro ao cancelar coleta:', err);
+          alert('Erro ao cancelar coleta. Tente novamente mais tarde.');
+          // Restaurar botão
+          btnCancelar.textContent = textoOriginal;
+          btnCancelar.disabled = false;
+        });
+    }
+
+    // Funções para o modal de reagendamento
+    function abrirModalReagendamento() {
+      const modal = document.getElementById('modal-reagendamento');
+      const inputData = document.getElementById('nova-data');
+      
+      // Definir data mínima como hoje
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      inputData.min = `${ano}-${mes}-${dia}`;
+      
+      // Limpar alerta
+      document.getElementById('modal-alert').innerHTML = '';
+      
+      // Mostrar modal
+      modal.style.display = 'block';
+    }
+
+    function fecharModalReagendamento() {
+      const modal = document.getElementById('modal-reagendamento');
+      modal.style.display = 'none';
+    }
+
+    function confirmarReagendamento() {
+      const idColeta = document.getElementById('info-agendamento').dataset.idColeta;
+      const novaData = document.getElementById('nova-data').value;
+      const alertDiv = document.getElementById('modal-alert');
+      
+      // Validar data
+      if (!novaData) {
+        alertDiv.innerHTML = '<div class="alert alert-danger">Por favor, selecione uma data.</div>';
+        return;
+      }
+      
+      // Mostrar carregando
+      const btnConfirmar = document.querySelector('.btn-success');
+      btnConfirmar.textContent = 'Reagendando...';
+      btnConfirmar.disabled = true;
+      
+      // Enviar para o servidor
+      fetch('/reagendar-coleta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idColeta, novaData })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.sucesso) {
+          // Fechar modal
+          fecharModalReagendamento();
+          
+          // Atualizar exibição
+          const agendamento = JSON.parse(localStorage.getItem('agendamento') || '{}');
+          agendamento.data = novaData;
+          agendamento.dataExibicao = data.novaDataExibicao;
+          
+          // Atualizar a exibição
+          exibirAgendamento(agendamento);
+          
+          // Mostrar mensagem de sucesso
+          const extra = document.getElementById('info-extra');
+          extra.innerHTML += `
+            <div class="nota" style="color: #27ae60; background-color: #d5f4e6; padding: 10px; border-radius: 5px; margin-top: 10px;">
+              ✅ Coleta reagendada com sucesso para ${data.novaDataExibicao}.
+            </div>
+          `;
+        } else {
+          alertDiv.innerHTML = `<div class="alert alert-danger">${data.mensagem || 'Erro ao reagendar coleta'}</div>`;
+          btnConfirmar.textContent = 'Confirmar';
+          btnConfirmar.disabled = false;
+        }
+      })
+      .catch(err => {
+        console.error('Erro ao reagendar:', err);
+        alertDiv.innerHTML = '<div class="alert alert-danger">Erro ao reagendar. Tente novamente.</div>';
+        btnConfirmar.textContent = 'Confirmar';
+        btnConfirmar.disabled = false;
+      });
+    }
+
+    // Função para voltar página
+    function voltarPagina() {
+      const lastPage = document.referrer || '/';
+      window.location.href = lastPage;
+    }
+
+    // Função para escapar HTML
+    function escapeHTML(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    // Fechar modal quando clicar fora
+    window.onclick = function(event) {
+      const modal = document.getElementById('modal-reagendamento');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    // Carregar página
+    document.addEventListener('DOMContentLoaded', function () {
+      // Verificar se há parâmetro de ID na URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const idColetaParam = urlParams.get('idColeta');
+
+      if (idColetaParam) {
+        // Se veio da página de agendamento, salvar ID no localStorage temporariamente
+        let agendamentoLocal = {};
+        try {
+          const agendamentoStr = localStorage.getItem('agendamento');
+          if (agendamentoStr) {
+            agendamentoLocal = JSON.parse(agendamentoStr);
+          }
+        } catch (e) {
+          logDebug('Erro ao parsear agendamento local:', e);
+        }
+        
+        agendamentoLocal.idColeta = idColetaParam;
+        localStorage.setItem('agendamento', JSON.stringify(agendamentoLocal));
+      }
+
+      // Primeiro verificar no localStorage (para resposta imediata)
+      verificarAgendamentoLocal();
+      
+      // Depois buscar do servidor (para dados atualizados)
+      buscarAgendamentoServidor();
+    });
   </script>
 </body>
 </html>

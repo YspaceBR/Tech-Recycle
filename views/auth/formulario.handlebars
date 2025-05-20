@@ -90,6 +90,7 @@
       margin-top: 10px;
       background-color: #f9f9f9;
       font-size: 14px;
+      box-sizing: border-box;
     }
     .note {
       font-size: 12px;
@@ -159,9 +160,14 @@
       cursor: pointer;
       margin: 20px auto 0 auto;
       display: block;
+      min-width: 150px;
     }
     .btn-agendar:hover {
       background-color: #218838;
+    }
+    .btn-agendar:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
     }
     .month-nav {
       display: flex;
@@ -188,6 +194,12 @@
     .hidden {
       display: none;
     }
+    .error-message {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -196,7 +208,7 @@
     <div class="local-card">
       <h2 id="nome-local">Carregando...</h2>
     </div>
-    <form id="coleta-form" action="/agendar-coleta" method="POST">
+    <form id="coleta-form">
       <div class="agendamento-box">
         <div class="calendar-section">
           <h2>Quando será sua coleta?</h2>
@@ -215,18 +227,20 @@
             <div class="week-day">Sáb</div>
           </div>
           <div class="calendar" id="calendario"></div>
+          <div class="error-message" id="error-data">Por favor, selecione uma data.</div>
           <input type="hidden" id="data" name="data" required>
         </div>
         <div class="material-section">
           <h2>Quais materiais serão coletados?</h2>
           <div class="note" id="material-nota"></div>
           <select class="dropdown" id="material-select" name="material" required>
-            <option value="">Selecione uma ou mais opções</option>
-            <option value="informatica">Informatica</option>
-            <option value="Eletro Eletronicos">Produtos Eletronicos</option>
-            <option value="Residuos Eletronicos">Residuos Eletronicos</option>
-            <option value="Aparelhos Telefonicos">Aparelhos Telefonicos</option>
+            <option value="">Selecione uma opção</option>
+            <option value="informatica">Informática</option>
+            <option value="Eletro Eletronicos">Produtos Eletrônicos</option>
+            <option value="Residuos Eletronicos">Resíduos Eletrônicos</option>
+            <option value="Aparelhos Telefonicos">Aparelhos Telefônicos</option>
           </select>
+          <div class="error-message" id="error-material">Por favor, selecione o tipo de material.</div>
         </div>
         <div class="peso-section">
           <h2>Qual o peso aproximado da sua separação?</h2>
@@ -238,6 +252,7 @@
             <option value="10a20">De 10kg a 20kg</option>
             <option value="mais20">Mais de 20kg</option>
           </select>
+          <div class="error-message" id="error-peso">Por favor, selecione o peso aproximado.</div>
         </div>
         <div class="toggle-container">
           <h2>Utilizar endereço e contatos do cadastro</h2>
@@ -309,6 +324,9 @@
         dia.classList.add('disabled');
       } else {
         dia.onclick = () => {
+          // Limpar erro de data se houver
+          document.getElementById('error-data').style.display = 'none';
+          
           document.querySelectorAll('.day.active').forEach(el => el.classList.remove('active'));
           dia.classList.add('active');
           diaSelecionado = dataAtual;
@@ -334,6 +352,19 @@
     atualizarCalendario();
   }
 
+  // Validação em tempo real
+  document.getElementById('material-select').addEventListener('change', function() {
+    if (this.value) {
+      document.getElementById('error-material').style.display = 'none';
+    }
+  });
+
+  document.getElementById('peso-select').addEventListener('change', function() {
+    if (this.value) {
+      document.getElementById('error-peso').style.display = 'none';
+    }
+  });
+
   window.onload = () => {
     if (!pontoSelecionado) {
       voltarPagina();
@@ -341,7 +372,11 @@
     }
     atualizarCalendario();
 
-    document.getElementById('coleta-form').addEventListener('submit', function(event) {
+    document.getElementById('coleta-form').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Previne o envio padrão do formulário
+
+      // Limpar mensagens de erro
+      document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
 
       const dataValue = document.getElementById('data').value;
       const materialValue = document.getElementById('material-select').value;
@@ -350,17 +385,73 @@
       const usarCadastroValue = document.getElementById('usar-cadastro').checked;
       const observacaoValue = document.getElementById('observacao').value;
 
-      const agendamento = {
-        data: dataValue,
-        material: materialValue,
-        local: localValue,
-        peso: pesoValue,
-        usarCadastro: usarCadastroValue,
-        observacao: observacaoValue
-      };
+      // Validações com mensagens de erro visuais
+      let hasError = false;
 
-      localStorage.setItem('agendamento', JSON.stringify(agendamento));
-      console.log('Dados de agendamento salvos:', agendamento);
+      if (!dataValue) {
+        document.getElementById('error-data').style.display = 'block';
+        hasError = true;
+      }
+      if (!materialValue) {
+        document.getElementById('error-material').style.display = 'block';
+        hasError = true;
+      }
+      if (!pesoValue) {
+        document.getElementById('error-peso').style.display = 'block';
+        hasError = true;
+      }
+
+      if (hasError) {
+        return;
+      }
+
+      // Desabilitar botão de envio
+      const btnAgendar = document.querySelector('.btn-agendar');
+      const textoOriginal = btnAgendar.textContent;
+      btnAgendar.textContent = 'Agendando...';
+      btnAgendar.disabled = true;
+
+      try {
+        // Enviar dados para o servidor
+        const response = await fetch('/agendar-coleta', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            data: dataValue,
+            material: materialValue,
+            local: localValue,
+            peso: pesoValue,
+            usarCadastro: usarCadastroValue,
+            observacao: observacaoValue
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.sucesso) {
+          // Salvar dados no localStorage para a próxima página
+          localStorage.setItem('agendamento', JSON.stringify(result.agendamento));
+          
+          // Redirecionar para a página de "minhas coletas" com o ID
+          window.location.href = `/agenda?idColeta=${result.agendamento.idColeta}`;
+        } else {
+          // Mostrar erro
+          alert('Erro ao agendar coleta: ' + (result.mensagem || 'Erro desconhecido'));
+          
+          // Restaurar botão
+          btnAgendar.textContent = textoOriginal;
+          btnAgendar.disabled = false;
+        }
+      } catch (error) {
+        console.error('Erro ao agendar coleta:', error);
+        alert('Erro ao agendar coleta. Tente novamente mais tarde.');
+        
+        // Restaurar botão
+        btnAgendar.textContent = textoOriginal;
+        btnAgendar.disabled = false;
+      }
     });
   };
 </script>
