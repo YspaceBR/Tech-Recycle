@@ -22,8 +22,7 @@ router.get("/busca", usuarioController.getBusca);
 router.post("/agendar-coleta", coletaController.agendarColeta);
 router.post('/cancelar-coleta', coletaController.cancelarColeta);
 router.get('/minhas-coletas', coletaController.buscarAgendamento);
-router.get('/buscar-agendamento', coletaController.buscarAgendamentoAPI);
-
+router.get('/buscar-agendamento', coletaController.buscarAgendamentosAPI);
 // Rota de exclusão de conta
 router.post("/excluir", authController.excluirConta);
 

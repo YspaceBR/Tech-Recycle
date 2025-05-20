@@ -154,32 +154,32 @@ exports.buscarAgendamento = async (req, res) => {
 };
 
 // Buscar agendamento para AJAX (agenda.handlebars)
-exports.buscarAgendamentoAPI = async (req, res) => {
+exports.buscarAgendamentosAPI = async (req, res) => {
   try {
     if (!req.session || !req.session.usuario || !req.session.usuario.id) {
       return res.json({ sucesso: false, mensagem: 'Usuário não autenticado.' });
     }
     const idUsuario = req.session.usuario.id;
 
-    // Busca o último agendamento do usuário (ajuste conforme sua lógica)
+    // Buscar todas as coletas futuras (ou todas, se quiser)
     const [rows] = await conn.promise().query(
-      'SELECT * FROM Coleta WHERE ID_Usuario = ? ORDER BY Data DESC LIMIT 1',
+      'SELECT * FROM Coleta WHERE ID_Usuario = ? ORDER BY Data DESC',
       [idUsuario]
     );
-    const agendamento = rows[0];
-    if (!agendamento) {
-      return res.json({ sucesso: false, mensagem: 'Nenhum agendamento encontrado.' });
-    }
-    // Ajuste de nomes para o front
-    agendamento.idColeta = agendamento.ID_Coleta;
-    agendamento.local = agendamento.Local;
-    agendamento.material = agendamento.Material;
-    agendamento.peso = agendamento.Peso;
-    agendamento.data = agendamento.Data;
-    agendamento.dataExibicao = new Date(agendamento.Data).toLocaleDateString('pt-BR');
-    res.json({ sucesso: true, agendamento });
+
+    // Formatar datas
+    rows.forEach(agendamento => {
+      agendamento.idColeta = agendamento.ID_Coleta;
+      agendamento.local = agendamento.Local;
+      agendamento.material = agendamento.Material;
+      agendamento.peso = agendamento.Peso;
+      agendamento.data = agendamento.Data;
+      agendamento.dataExibicao = new Date(agendamento.Data).toLocaleDateString('pt-BR');
+    });
+
+    res.json({ sucesso: true, agendamentos: rows });
   } catch (error) {
-    res.json({ sucesso: false, mensagem: 'Erro ao buscar agendamento.' });
+    res.json({ sucesso: false, mensagem: 'Erro ao buscar agendamentos.' });
   }
 };
 

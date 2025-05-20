@@ -4,102 +4,58 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  // Função para buscar agendamento consistentemente em todas as páginas
-  function verificarAgendamento() {
-    const statusAgendamentoElement = document.getElementById('status-agendamento');
-    if (!statusAgendamentoElement) return;
-    
-    try {
-      const agendamentoStr = localStorage.getItem('agendamento');
-      
-      if (agendamentoStr) {
-        const dados = JSON.parse(agendamentoStr);
-        
-        // Verificar se os dados mínimos estão presentes
-        if (dados && (dados.local || dados.material)) {
-          const dataFormatada = dados.dataExibicao || formatarData(dados.data);
-          
-          statusAgendamentoElement.innerHTML = `
-            <div class="card-coleta">
-              <p>Você possui um agendamento!</p>
-              <div><strong>${dados.local || 'Local não especificado'}</strong></div>
-              <div class="data-material" style="color: #28a745;">
-                <strong>${dataFormatada} - </strong>
-                <strong>${dados.material || 'Material não especificado'}</strong>
-              </div>
-              <button onclick="window.location.href='/mapa'">Ver local</button>
-            </div>
-          `;
-        } else {
-          exibirSemAgendamento(statusAgendamentoElement);
-        }
-      } else {
-        exibirSemAgendamento(statusAgendamentoElement);
-      }
-    } catch (e) {
-      console.error('Erro ao verificar agendamento:', e);
-      exibirSemAgendamento(statusAgendamentoElement);
-    }
-  }
-  
-  function exibirSemAgendamento(element) {
-    element.innerHTML = `
-      <div class="card-coleta">
-        <p>Você não possui nenhum agendamento</p>
-      </div>
-    `;
-  }
-  
-  function formatarData(data) {
-    if (!data) return 'Data não especificada';
-    
-    if (data.includes('-')) {
-      const [ano, mes, dia] = data.split('-');
-      return `${dia}/${mes}/${ano}`;
-    }
-    
-    if (data.includes('/')) {
-      return data; // Já está no formato brasileiro
-    }
-    
-    try {
-      const date = new Date(data);
-      return date.toLocaleDateString('pt-BR');
-    } catch (e) {
-      return data;
-    }
-  }
-  
-  // Executar verificação do agendamento
-  verificarAgendamento();
-  
-  // Opcional: buscar dados atualizados do servidor se necessário
   async function buscarAgendamentoServidor() {
     try {
       const response = await fetch('/buscar-agendamento', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
-      
       const data = await response.json();
-      
-      if (data.sucesso && data.agendamento) {
-        // Atualizar localStorage com dados do servidor
-        localStorage.setItem('agendamento', JSON.stringify(data.agendamento));
-        // Atualizar a exibição
-        verificarAgendamento();
+
+      const statusAgendamentoElement = document.getElementById('status-agendamento');
+
+      if (data.sucesso && data.agendamentos && data.agendamentos.length > 0) {
+        const quantidadeAgendamentos = data.agendamentos.length;
+        const dados = data.agendamentos[0]; // Mostra o mais recente, por exemplo
+        let dataFormatada = '';
+        if (dados.dataExibicao) {
+          dataFormatada = dados.dataExibicao;
+        } else if (dados.data) {
+          const d = new Date(dados.data);
+          dataFormatada = d.toLocaleDateString('pt-BR');
+        }
+
+        statusAgendamentoElement.innerHTML = `
+          <div class="card-coleta">
+            <p>Você possui ${quantidadeAgendamentos} agendamento${quantidadeAgendamentos > 1 ? 's' : ''}!</p>
+            <div><strong>${dados.local || 'Local não especificado'}</strong></div>
+            <div class="data-material" style="color: #28a745;">
+              <strong>${dataFormatada} - </strong>
+              <strong>${dados.material || 'Material não especificado'}</strong>
+            </div>
+            <button onclick="window.location.href='/mapa'">Ver local</button>
+          </div>
+        `;
+      } else {
+        statusAgendamentoElement.innerHTML = `
+          <div class="card-coleta">
+            <p>Você não possui nenhum agendamento</p>
+          </div>
+        `;
       }
     } catch (error) {
-      console.error('Erro ao buscar agendamento do servidor:', error);
+      statusAgendamentoElement.innerHTML = `
+        <div class="card-coleta">
+          <p>Erro ao buscar agendamento</p>
+        </div>
+      `;
     }
   }
-  
-  // Buscar dados do servidor após exibir os dados do localStorage
+
   buscarAgendamentoServidor();
 });
 </script>
+
 <div class="button-pontos" style="margin-left: 10px;">
   <button class="pontos-coletas" onclick="window.location.href='/mapa'">
     <svg
