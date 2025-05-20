@@ -136,13 +136,12 @@ exports.buscarAgendamento = async (req, res) => {
     
     const idUsuario = req.session.usuario.id;
     
-    // Buscar agendamento ativo do usuário
+    // Buscar agendamento ativo do usuário (SEM a coluna Observacao)
     const query = `
       SELECT 
         c.ID_Coleta as idColeta,
         c.Data as data,
         c.Local as local,
-        c.Observacao as observacao,
         d.Tipo as material,
         d.Peso as peso
       FROM Coleta c
@@ -164,7 +163,8 @@ exports.buscarAgendamento = async (req, res) => {
       const agendamentoFormatado = {
         ...agendamento,
         data: agendamento.data,
-        dataExibicao: dataFormatada
+        dataExibicao: dataFormatada,
+        observacao: null // Sempre null já que não temos a coluna
       };
       
       return res.json({ 
