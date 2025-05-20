@@ -186,7 +186,8 @@ exports.buscarAgendamentosAPI = async (req, res) => {
 // Reagendar coleta
 exports.reagendarColeta = async (req, res) => {
   try {
-    const { idColeta, novaData } = req.body;
+    // Certifique-se de que o frontend envia: material, peso, observacao
+    const { idColeta, novaData, material, peso, observacao } = req.body;
 
     if (!req.session || !req.session.usuario || !req.session.usuario.id) {
       return res.status(401).json({ sucesso: false, mensagem: 'Usuário não autenticado' });
@@ -231,8 +232,11 @@ exports.reagendarColeta = async (req, res) => {
       return res.status(400).json({ sucesso: false, mensagem: 'Você já possui um agendamento para esta data' });
     }
 
-    // Atualizar data da coleta
-    await conn.promise().query('UPDATE Coleta SET Data = ? WHERE ID_Coleta = ?', [novaData, idColeta]);
+    // Atualizar data, material, peso e observação da coleta
+    await conn.promise().query(
+      'UPDATE Coleta SET Data = ?, Material = ?, Peso = ?, Observacao = ? WHERE ID_Coleta = ?',
+      [novaData, material, peso, observacao, idColeta]
+    );
 
     const dataExibicao = new Date(novaData).toLocaleDateString('pt-BR');
 

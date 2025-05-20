@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <title>Minhas Coletas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <style>
+  <style>
+    /* ...seu CSS permanece igual... */
     .formulario-coleta {
       background-color: #f5f5f5;
       border-radius: 12px;
@@ -72,21 +73,25 @@
       z-index: 1000;
       left: 0;
       top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       background-color: rgba(0,0,0,0.4);
     }
     .modal-content {
       background-color: #fefefe;
       font-family: "Montserrat", sans-serif;
       font-weight: 500;
-      font-size: 18px;
-      margin: 15% auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       padding: 20px;
       border-radius: 10px;
       width: 80%;
       max-width: 500px;
+      overflow: visible;
+      max-height: 90vh;
     }
     .close {
       color: #aaa;
@@ -112,9 +117,14 @@
     }
     .form-control {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
+      padding: 12px;
+      border: 1px solid #ccc;
+      color: #333;
+      font-family: "Montserrat", sans-serif;
       border-radius: 5px;
+      margin-top: 10px;
+      background-color: #f9f9f9;
+      font-size: 14px;
       box-sizing: border-box;
     }
     .btn-success {
@@ -168,23 +178,49 @@
     </button>
   </div>
 
-  <!-- Modal de Reagendamento -->
-  <div id="modal-reagendamento" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="close" onclick="fecharModalReagendamento()">&times;</span>
-        <h2>Reagendar Coleta</h2>
-      </div>
-      <div id="modal-alert"></div>
-      <div class="form-group">
-        <label for="nova-data">Selecione a nova data:</label>
-        <input type="date" id="nova-data" class="form-control" min="">
-      </div>
-      <div class="modal-footer">
-        <button class="btn-success" onclick="confirmarReagendamento()">Confirmar</button>
+<!-- Modal de Reagendamento -->
+<div id="modal-reagendamento" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close" onclick="fecharModalReagendamento()">&times;</span>
+      <div class="local-card">
+        <h2 id="nome-local">Carregando...</h2>
       </div>
     </div>
+    <div id="modal-alert"></div>
+    <div class="form-group">
+      <label for="nova-data">Selecione a nova data:</label>
+      <input type="date" id="nova-data" class="form-control" min="">
+    </div>
+    <div class="form-group">
+      <label for="novo-material">Quais materiais serão coletados?</label>
+      <select id="novo-material" class="form-control" required>
+        <option value="">Selecione uma opção</option>
+        <option value="informatica">Informática</option>
+        <option value="Eletro Eletronicos">Produtos Eletrônicos</option>
+        <option value="Residuos Eletronicos">Resíduos Eletrônicos</option>
+        <option value="Aparelhos Telefonicos">Aparelhos Telefônicos</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="novo-peso">Qual o peso aproximado da sua separação?</label>
+      <select id="novo-peso" class="form-control" required>
+        <option value="">Selecione uma opção</option>
+        <option value="ate5">Até 5kg</option>
+        <option value="5a10">De 5kg a 10kg</option>
+        <option value="10a20">De 10kg a 20kg</option>
+        <option value="mais20">Mais de 20kg</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="nova-observacao">Tem alguma observação?</label>
+      <textarea id="nova-observacao" class="form-control" placeholder="Comente sobre seus itens, horários que estará disponível, etc."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-success" onclick="confirmarReagendamento()">Confirmar</button>
+    </div>
   </div>
+</div>
 
 <script>
   function logDebug(msg, obj) {
@@ -193,59 +229,66 @@
     }
   }
 
+  // ====== Para TESTE: definir pontoTemp se não existir ======
+  if (!localStorage.getItem('pontoTemp')) {
+    localStorage.setItem('pontoTemp', 'Tech-Recycle');
+  }
+  // Recupera ponto selecionado
+  const pontoSelecionado = localStorage.getItem('pontoTemp') || '';
+
   async function buscarAgendamentoServidor() {
-  try {
-    const response = await fetch('/buscar-agendamento', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch('/buscar-agendamento', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
 
-    const cardContainer = document.getElementById('info-agendamento');
-    const mensagem = document.getElementById('mensagem-agendamento');
-    const extra = document.getElementById('info-extra');
-    const tituloQuantidade = document.getElementById('titulo-quantidade');
-    const quantidadeAgendamentos = document.getElementById('quantidade-agendamentos');
-    const pluralAgendamento = document.getElementById('plural-agendamento');
+      const cardContainer = document.getElementById('info-agendamento');
+      const mensagem = document.getElementById('mensagem-agendamento');
+      const extra = document.getElementById('info-extra');
+      const tituloQuantidade = document.getElementById('titulo-quantidade');
+      const quantidadeAgendamentos = document.getElementById('quantidade-agendamentos');
+      const pluralAgendamento = document.getElementById('plural-agendamento');
 
-    if (data.sucesso && data.agendamentos && data.agendamentos.length > 0) {
-      mensagem.style.display = 'none';
-      cardContainer.style.display = 'block';
-      const quantidade = data.agendamentos.length;
-      
-      // Atualiza o título dinâmico
-      tituloQuantidade.style.display = 'block';
-      quantidadeAgendamentos.textContent = quantidade;
-      pluralAgendamento.textContent = quantidade > 1 ? 's' : '';
+      if (data.sucesso && data.agendamentos && data.agendamentos.length > 0) {
+        mensagem.style.display = 'none';
+        cardContainer.style.display = 'block';
+        const quantidade = data.agendamentos.length;
 
-      // Adiciona os cards
-      let html = '';
-      html += data.agendamentos.map(agendamento => {
-        const local = escapeHTML(agendamento.local || 'Local não especificado');
-        const material = escapeHTML(agendamento.material || 'Material não especificado');
-        const dataFormatada = agendamento.dataExibicao || formatarDataExibicao(agendamento.data);
-        return `
-          <div class="formulario-coleta" data-id-coleta="${agendamento.idColeta}">
-            <div><strong>${local}</strong></div>
-            <div class="data-material">${dataFormatada} - ${material}</div>
-            <div class="button-container">
-              <button onclick="cancelarAgendamento(${agendamento.idColeta})" class="btn-cancelar">Cancelar coleta</button>
-              <button onclick="abrirModalReagendamento(${agendamento.idColeta})" class="btn-reagendar">Reagendar</button>
+        // Atualiza o título dinâmico
+        tituloQuantidade.style.display = 'block';
+        quantidadeAgendamentos.textContent = quantidade;
+        pluralAgendamento.textContent = quantidade > 1 ? 's' : '';
+
+        // Adiciona os cards
+        let html = '';
+        html += data.agendamentos.map(agendamento => {
+          const local = escapeHTML(agendamento.local || 'Local não especificado');
+          const material = escapeHTML(agendamento.material || 'Material não especificado');
+          const dataFormatada = agendamento.dataExibicao || formatarDataExibicao(agendamento.data);
+          return `
+            <div class="formulario-coleta" data-id-coleta="${agendamento.idColeta}">
+              <div><strong>${local}</strong></div>
+              <div class="data-material">${dataFormatada} - ${material}</div>
+              <div class="button-container">
+                <button onclick="cancelarAgendamento(${agendamento.idColeta})" class="btn-cancelar">Cancelar coleta</button>
+                <button onclick="abrirModalReagendamento(${agendamento.idColeta})" class="btn-reagendar">Reagendar</button>
+              </div>
             </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
 
-      cardContainer.innerHTML = html;
-      extra.innerHTML = `<div class="nota">*Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.</div>`;
-    } else {
+        cardContainer.innerHTML = html;
+        extra.innerHTML = `<div class="nota">*Deixe seus resíduos recicláveis prontos para retirada e fique atento ao seu telefone.</div>`;
+      } else {
+        exibirNenhumAgendamento();
+      }
+    } catch (error) {
+      console.error('Erro ao buscar agendamento do servidor:', error);
       exibirNenhumAgendamento();
     }
-  } catch (error) {
-    console.error('Erro ao buscar agendamento do servidor:', error);
-    exibirNenhumAgendamento();
   }
-}
 
   function verificarAgendamentoLocal() {
     try {
@@ -279,7 +322,7 @@
     tituloQuantidade.style.display = 'block';
     document.getElementById('quantidade-agendamentos').textContent = '1';
     document.getElementById('plural-agendamento').textContent = '';
-    
+
     card.innerHTML = `
       <div class="formulario-coleta" data-id-coleta="${agendamento.idColeta}">
         <div><strong>${local}</strong></div>
@@ -357,8 +400,37 @@
   function abrirModalReagendamento(idColeta) {
     idReagendamentoAtual = idColeta;
 
+    // Busque os dados do agendamento selecionado
+    const agendamento = Array.from(document.querySelectorAll('.formulario-coleta'))
+      .map(card => {
+        const dataMaterial = card.querySelector('.data-material')?.innerText || '';
+        let [data, resto] = dataMaterial.split(' - ');
+        let material = '';
+        let peso = '';
+        if (resto) {
+          const match = resto.match(/^([^(]+)\s*(\(([^)]+)\))?/);
+          material = match ? match[1].trim() : '';
+          peso = match && match[3] ? match[3].trim() : '';
+        }
+        return {
+          id: card.getAttribute('data-id-coleta'),
+          local: card.querySelector('strong')?.innerText || '',
+          material,
+          peso,
+          data: data || '',
+          observacao: card.getAttribute('data-observacao') || ''
+        };
+      })
+      .find(a => a.id == idColeta);
+
+    // Atualiza o nome do local no modal
+    document.getElementById('nome-local').innerText = agendamento?.local || pontoSelecionado;
+
     const modal = document.getElementById('modal-reagendamento');
     const inputData = document.getElementById('nova-data');
+    const inputMaterial = document.getElementById('novo-material');
+    const inputPeso = document.getElementById('novo-peso');
+    const inputObs = document.getElementById('nova-observacao');
 
     const hoje = new Date();
     const ano = hoje.getFullYear();
@@ -366,6 +438,10 @@
     const dia = String(hoje.getDate()).padStart(2, '0');
     inputData.min = `${ano}-${mes}-${dia}`;
     inputData.value = '';
+
+    inputMaterial.value = agendamento?.material || '';
+    inputPeso.value = agendamento?.peso || '';
+    inputObs.value = agendamento?.observacao || '';
 
     document.getElementById('modal-alert').innerHTML = '';
     modal.style.display = 'block';
@@ -377,6 +453,9 @@
 
   function confirmarReagendamento() {
     const novaData = document.getElementById('nova-data').value;
+    const novoMaterial = document.getElementById('novo-material').value;
+    const novoPeso = document.getElementById('novo-peso').value;
+    const novaObs = document.getElementById('nova-observacao').value;
     const alertDiv = document.getElementById('modal-alert');
     const btnConfirmar = document.querySelector('.btn-success');
 
@@ -391,7 +470,13 @@
     fetch('/reagendar-coleta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idColeta: idReagendamentoAtual, novaData })
+      body: JSON.stringify({
+        idColeta: idReagendamentoAtual,
+        novaData,
+        material: novoMaterial,
+        peso: novoPeso,
+        observacao: novaObs
+      })
     })
       .then(res => res.json())
       .then(data => {
