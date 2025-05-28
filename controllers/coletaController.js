@@ -1,4 +1,6 @@
 const conn = require("../config/db");
+const { parseISO, format } = require('date-fns');
+
 
 exports.agendarColeta = async (req, res) => {
   const { data, material, local, peso, observacao } = req.body;
@@ -12,15 +14,16 @@ exports.agendarColeta = async (req, res) => {
   }
 
   try {
-    // Inserir na tabela Coleta
+    const dataFormatada = data.substring(0, 10); 
+
     const [resultado] = await conn.promise().query(
       `INSERT INTO Coleta (Data, Material, Local, Peso, Observacao, ID_Usuario) VALUES (?, ?, ?, ?, ?, ?)`,
-      [data, material, local, peso, observacao, idUsuario]
+      [dataFormatada, material, local, peso, observacao, idUsuario]
     );
+
 
     const idColeta = resultado.insertId;
 
-    // Inserir na tabela Dispositivo
     await conn.promise().query(
       `INSERT INTO Dispositivo (Tipo, ID_Coleta, ID_Usuario, Peso) VALUES (?, ?, ?, ?)`,
       [material, idColeta, idUsuario, peso]
@@ -28,7 +31,7 @@ exports.agendarColeta = async (req, res) => {
 
     const novaColeta = {
       idColeta,
-      data,
+      data: dataFormatada,
       material,
       local,
       peso,
@@ -144,7 +147,12 @@ exports.buscarAgendamento = async (req, res) => {
       return res.render('auth/minhas-coletas', { agendamento: null, erro: 'Agendamento não encontrado.' });
     }
 
-    agendamento.dataExibicao = new Date(agendamento.Data).toLocaleDateString('pt-BR');
+    // Formata a data manualmente para DD/MM/YYYY
+    const dataStr = typeof agendamento.Data === 'string'
+      ? agendamento.Data.substring(0, 10)
+      : agendamento.Data.toISOString().substring(0, 10);
+    const [ano, mes, dia] = dataStr.split('-');
+    agendamento.dataExibicao = `${dia}/${mes}/${ano}`;
 
     res.render('auth/minhas-coletas', { agendamento });
   } catch (error) {
@@ -174,7 +182,12 @@ exports.buscarAgendamentosAPI = async (req, res) => {
       agendamento.material = agendamento.Material;
       agendamento.peso = agendamento.Peso;
       agendamento.data = agendamento.Data;
-      agendamento.dataExibicao = new Date(agendamento.Data).toLocaleDateString('pt-BR');
+      // CORREÇÃO: Formatar manualmente
+      const dataStr = typeof agendamento.Data === 'string'
+        ? agendamento.Data.substring(0, 10)
+        : agendamento.Data.toISOString().substring(0, 10);
+      const [ano, mes, dia] = dataStr.split('-');
+      agendamento.dataExibicao = `${dia}/${mes}/${ano}`;
     });
 
     res.json({ sucesso: true, agendamentos: rows });
@@ -238,7 +251,9 @@ exports.reagendarColeta = async (req, res) => {
       [novaData, material, peso, observacao, idColeta]
     );
 
-    const dataExibicao = new Date(novaData).toLocaleDateString('pt-BR');
+    // CORREÇÃO: Formatar manualmente
+    const [ano, mes, dia] = novaData.split('-');
+    const dataExibicao = `${dia}/${mes}/${ano}`;
 
     res.json({ 
       sucesso: true, 
