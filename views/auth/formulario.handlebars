@@ -5,7 +5,6 @@
   <title>Agendar Coleta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    /* Seu CSS original */
     .container {
       max-width: 600px;
       margin: 0 auto;
@@ -196,7 +195,9 @@
     }
     .error-message {
       color: #dc3545;
-      font-size: 12px;
+      font-family: "SourceCodePro", sans-serif;
+      font-weight: 500;
+      font-size: 15px;
       margin-top: 5px;
       display: none;
     }
@@ -233,7 +234,7 @@
         <div class="material-section">
           <h2>Quais materiais serão coletados?</h2>
           <div class="note" id="material-nota"></div>
-          <select class="dropdown" id="material-select" name="material" required>
+          <select class="dropdown" id="material-select" name="material">
             <option value="">Selecione uma opção</option>
             <option value="informatica">Informática</option>
             <option value="Eletro Eletronicos">Produtos Eletrônicos</option>
@@ -245,7 +246,7 @@
         <div class="peso-section">
           <h2>Qual o peso aproximado da sua separação?</h2>
           <div class="note" id="peso-nota"></div>
-          <select class="dropdown" id="peso-select" name="peso" required>
+          <select class="dropdown" id="peso-select" name="peso">
             <option value="">Selecione uma opção</option>
             <option value="ate5">Até 5kg</option>
             <option value="5a10">De 5kg a 10kg</option>
@@ -276,11 +277,6 @@
   if (!localStorage.getItem('pontoTemp')) {
     localStorage.setItem('pontoTemp', 'Tech-Recycle');
   }
-
-  // Recupera ponto selecionado
-  const pontoSelecionado = localStorage.getItem('pontoTemp') || '';
-  document.getElementById('nome-local').innerText = pontoSelecionado;
-  document.getElementById('local').value = pontoSelecionado;
 
   function voltarPagina() {
     window.location.href = '/mapa';
@@ -326,14 +322,16 @@
         dia.onclick = () => {
           // Limpar erro de data se houver
           document.getElementById('error-data').style.display = 'none';
-          
+
           document.querySelectorAll('.day.active').forEach(el => el.classList.remove('active'));
           dia.classList.add('active');
-          diaSelecionado = dataAtual;
+          diaSelecionado = d;
 
           const mm = String(mesAtual + 1).padStart(2, '0');
           const dd = String(d).padStart(2, '0');
-          document.getElementById('data').value = `${anoAtual}-${mm}-${dd}`;
+          const dataFinal = `${anoAtual}-${mm}-${dd}`;
+          console.log('Data selecionada no calendário:', dataFinal);
+          document.getElementById('data').value = dataFinal;
         };
       }
       calendario.appendChild(dia);
@@ -352,28 +350,33 @@
     atualizarCalendario();
   }
 
-  // Validação em tempo real
-  document.getElementById('material-select').addEventListener('change', function() {
-    if (this.value) {
-      document.getElementById('error-material').style.display = 'none';
-    }
-  });
-
-  document.getElementById('peso-select').addEventListener('change', function() {
-    if (this.value) {
-      document.getElementById('error-peso').style.display = 'none';
-    }
-  });
-
   window.onload = () => {
+    // Recupera ponto selecionado
+    const pontoSelecionado = localStorage.getItem('pontoTemp') || '';
+    document.getElementById('nome-local').innerText = pontoSelecionado;
+    document.getElementById('local').value = pontoSelecionado;
+
     if (!pontoSelecionado) {
       voltarPagina();
       return;
     }
     atualizarCalendario();
 
+    // Validação em tempo real
+    document.getElementById('material-select').addEventListener('change', function() {
+      if (this.value) {
+        document.getElementById('error-material').style.display = 'none';
+      }
+    });
+
+    document.getElementById('peso-select').addEventListener('change', function() {
+      if (this.value) {
+        document.getElementById('error-peso').style.display = 'none';
+      }
+    });
+
     document.getElementById('coleta-form').addEventListener('submit', async function(event) {
-      event.preventDefault(); // Previne o envio padrão do formulário
+      event.preventDefault();
 
       // Limpar mensagens de erro
       document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
@@ -385,14 +388,13 @@
       const usarCadastroValue = document.getElementById('usar-cadastro').checked;
       const observacaoValue = document.getElementById('observacao').value;
 
-      // Validações com mensagens de erro visuais
       let hasError = false;
 
       if (!dataValue) {
         document.getElementById('error-data').style.display = 'block';
         hasError = true;
       }
-      if (!materialValue) {
+      if (!materialValue || materialValue === "") {
         document.getElementById('error-material').style.display = 'block';
         hasError = true;
       }
@@ -412,7 +414,6 @@
       btnAgendar.disabled = true;
 
       try {
-        // Enviar dados para o servidor
         const response = await fetch('/agendar-coleta', {
           method: 'POST',
           headers: {
@@ -431,29 +432,21 @@
         const result = await response.json();
 
         if (result.sucesso) {
-          // Salvar dados no localStorage para a próxima página
           localStorage.setItem('agendamento', JSON.stringify(result.agendamento));
-          
-          // Redirecionar para a página de "minhas coletas" com o ID
           window.location.href = `/agenda?idColeta=${result.agendamento.idColeta}`;
         } else {
-          // Mostrar erro
           alert('Erro ao agendar coleta: ' + (result.mensagem || 'Erro desconhecido'));
-          
-          // Restaurar botão
           btnAgendar.textContent = textoOriginal;
           btnAgendar.disabled = false;
         }
       } catch (error) {
         console.error('Erro ao agendar coleta:', error);
         alert('Erro ao agendar coleta. Tente novamente mais tarde.');
-        
-        // Restaurar botão
         btnAgendar.textContent = textoOriginal;
         btnAgendar.disabled = false;
       }
     });
   };
-</script>
+  </script>
 </body>
 </html>
