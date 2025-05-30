@@ -50,5 +50,5 @@ app.use(authRoutes);
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em zz ${PORT}`);
+  console.log(`🚀 Servidor rodando em ${PORT}`);
 });
