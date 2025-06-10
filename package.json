@@ -5,8 +5,7 @@
   "scripts": {
     "start": "node ./app.js",
     "dev": "nodemon ./app.js",
-    "deploy": "git add . && (git diff --cached --quiet || git commit -m \"db atualizado \") && git push origin main",
-    "test": "jest"
+    "deploy": "git add . && (git diff --cached --quiet || git commit -m \"db atualizado \") && git push origin main"
   },
   "keywords": [],
   "author": "",
