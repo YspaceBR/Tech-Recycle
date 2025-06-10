@@ -6,32 +6,28 @@ Sistema web para incentivar o descarte correto de resíduos, com cadastro e logi
 
 ## 📁 Estrutura do Projeto
 
+```
 Tech-Recycle/
-├── config/ # Configuração do banco de dados
-│ └── db.js
-├── controllers/ # Lógica dos controladores
-│ ├── authController.js
-│ ├── coletaController.js
-│ └── usuarioController.js
-├── middlewares/ # Middlewares da aplicação
-│ └── authMiddleware.js
-├── routes/ # Definição das rotas
-│ ├── authRoutes.js
-│ └── publicRoutes.js
-├── views/ # Páginas renderizadas com Handlebars
-│ └── auth/
-│ └── principal.handlebars
-├── assets/ # Arquivos estáticos (CSS, imagens, fontes)
-├── app.js # Arquivo principal da aplicação
-└── .env # Variáveis de ambiente
-
-yaml
-Sempre exibir os detalhes
-
-Copiar
+├── config/                   # Configuração do banco de dados
+│   └── db.js
+├── controllers/              # Lógica dos controladores
+│   ├── authController.js
+│   ├── coletaController.js
+│   └── usuarioController.js
+├── middlewares/             # Middlewares da aplicação
+│   └── authMiddleware.js
+├── routes/                  # Definição das rotas
+│   ├── authRoutes.js
+│   └── publicRoutes.js
+├── views/                   # Páginas renderizadas com Handlebars
+│   └── auth/
+│       └── principal.handlebars
+├── assets/                  # Arquivos estáticos (CSS, imagens, fontes)
+├── app.js                   # Arquivo principal da aplicação
+└── .env                     # Variáveis de ambiente
+```
 
 ---
-
 
 ## 📦 Tecnologias
 
@@ -44,7 +40,6 @@ Copiar
 
 ---
 
-
 ## 🚀 Como rodar localmente
 
 1. Clone o repositório  
@@ -53,7 +48,6 @@ Copiar
 4. Inicie com `npm start`  
 
 ---
-
 
 ## ✅ Requisitos Atendidos
 
