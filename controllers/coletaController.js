@@ -1,7 +1,6 @@
 const conn = require("../config/db");
 const { parseISO, format } = require('date-fns');
 
-
 exports.agendarColeta = async (req, res) => {
   const { data, material, local, peso, observacao } = req.body;
   const idUsuario = req.session?.usuario?.id;
@@ -20,7 +19,6 @@ exports.agendarColeta = async (req, res) => {
       `INSERT INTO Coleta (Data, Material, Local, Peso, Observacao, ID_Usuario) VALUES (?, ?, ?, ?, ?, ?)`,
       [dataFormatada, material, local, peso, observacao, idUsuario]
     );
-
 
     const idColeta = resultado.insertId;
 
@@ -54,6 +52,7 @@ exports.agendarColeta = async (req, res) => {
 
 // Cancelar coleta
 exports.cancelarColeta = async (req, res) => {
+  let connection;
   try {
     let { idColeta } = req.body;
     idColeta = parseInt(idColeta);
@@ -95,20 +94,21 @@ exports.cancelarColeta = async (req, res) => {
       return res.status(400).json({ sucesso: false, mensagem: 'Não é possível cancelar uma coleta passada' });
     }
 
-    // Iniciar transação
-    await conn.promise().beginTransaction();
+    // Iniciar transação corretamente
+    connection = await conn.promise().getConnection();
+    await connection.beginTransaction();
 
     try {
       // Excluir dispositivos relacionados (se houver tabela Dispositivo)
-      await conn.promise().query('DELETE FROM Dispositivo WHERE ID_Coleta = ?', [idColeta]);
+      await connection.query('DELETE FROM Dispositivo WHERE ID_Coleta = ?', [idColeta]);
       // Excluir coleta
-      const [deleteResult] = await conn.promise().query('DELETE FROM Coleta WHERE ID_Coleta = ?', [idColeta]);
+      const [deleteResult] = await connection.query('DELETE FROM Coleta WHERE ID_Coleta = ?', [idColeta]);
 
       if (deleteResult.affectedRows === 0) {
         throw new Error('Nenhuma linha foi excluída');
       }
 
-      await conn.promise().commit();
+      await connection.commit();
 
       res.json({
         sucesso: true,
@@ -122,11 +122,14 @@ exports.cancelarColeta = async (req, res) => {
       });
 
     } catch (transactionError) {
-      await conn.promise().rollback();
+      await connection.rollback();
       throw transactionError;
+    } finally {
+      connection.release();
     }
 
   } catch (error) {
+    if (connection) connection.release();
     console.error('Erro ao cancelar coleta:', error);
     res.status(500).json({ sucesso: false, mensagem: 'Erro interno ao cancelar coleta' });
   }
